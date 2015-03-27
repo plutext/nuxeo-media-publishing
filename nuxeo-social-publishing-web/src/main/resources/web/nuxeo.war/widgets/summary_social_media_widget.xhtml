@@ -1,0 +1,103 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:f="http://java.sun.com/jsf/core"
+        class="content_block">
+
+    <h3 class="summaryTitle">#{messages['heading.socialMedia']}</h3>
+
+    <c:forEach var="uploadService" items="#{socialPublishing.getAvailableServices(value)}" varStatus="status">
+
+        <c:set var="isMediaPublished" value="#{socialPublishing.isPublished(value, uploadService)}"/>
+        <c:if test="#{isMediaPublished}">
+            <c:set var="mediaUrl" value="#{socialPublishing.getPublishedURL(value, uploadService)}"/>
+            <c:set var="mediaEmbedCode" value="#{socialPublishing.getEmbedCode(value, uploadService)}" />
+            <c:set var="mediaStats" value="#{socialPublishing.getStats(value, uploadService)}" />
+        </c:if>
+
+        <div class="clear">
+            <div class="labelColumn" style="float: left;">
+                #{uploadService}
+            </div>
+            <span>
+                <c:choose>
+                    <c:when test="#{isMediaPublished}">
+                        #{messages['label.widget.socialMedia.published']}
+
+                        <span class="actionsColumn" style="float:right">
+                            <h:outputLink value="#"
+                                          styleClass="button smallButton"
+                                          rendered="#{not empty mediaUrl}"
+                                          onclick="toggleUrl('#{uploadService}'); return false;">
+                                #{messages['action.socialMedia.externalLink']}
+                            </h:outputLink>
+
+                            <h:outputLink value="#"
+                                          styleClass="button smallButton"
+                                          rendered="#{not empty mediaEmbedCode}"
+                                          onclick="toggleEmbedCode('#{uploadService}'); return false;">
+                                #{messages['action.socialMedia.embedCode']}
+                            </h:outputLink>
+
+                            <h:outputLink value="#"
+                                          styleClass="button smallButton"
+                                          rendered="#{not empty mediaStats}"
+                                          onclick="toggleStats('#{uploadService}'); return false;">
+                                #{messages['action.socialMedia.stats']}
+                            </h:outputLink>
+                        </span>
+                    </c:when>
+                    <c:otherwise>
+                        <div style="margin-bottom: 15px">
+                            #{messages['label.widget.socialMedia.notpublished']}
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </span>
+        </div>
+        <c:if test="#{isMediaPublished}">
+            <div style="margin: 15px auto">
+                <h:inputText class="#{uploadService}_externalUrl"
+                             value="#{mediaUrl}"
+                             readonly="true" onclick="javascript:this.focus();this.select();" size="120"
+                             style="display: none; border-style: dashed; font-family: Courier; font-size: 12px; line-height: 1.4em;"/>
+
+                <h:inputTextarea class="#{uploadService}_embedCode"
+                                 value="#{mediaEmbedCode}"
+                                 readonly="true" onclick="javascript:this.focus();this.select();" cols="120" rows="5"
+                                 style="display: none; border-style: dashed; font-family: Courier; font-size: 12px; line-height: 1.4em; resize: vertical"/>
+
+                <c:if test="#{not empty mediaStats}">
+                    <div class="#{uploadService}_stats"
+                         style="display:none; border: 1px dashed #c6c6c6;clear: both;background: #fff;padding: 5px;font-size: 12px;">
+                        <table width="100%" cellspacing="0" style="text-align: center">
+                            <tbody>
+                                <tr>
+                                <c:forEach items="#{mediaStats}" var="entry">
+                                    <td>
+                                        <span style="display: block"><b>#{entry.key}</b></span>
+                                        <span>#{entry.value}</span>
+                                    </td>
+                                </c:forEach>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </c:if>
+            </div>
+        </c:if>
+    </c:forEach>
+
+    <script type="text/javascript">
+        function toggleUrl(provider) {
+            jQuery("." + provider + "_externalUrl").toggle();
+        }
+
+        function toggleEmbedCode(provider) {
+            jQuery("." + provider + "_embedCode").toggle();
+        }
+
+        function toggleStats(provider) {
+            jQuery("." + provider + "_stats").toggle();
+        }
+    </script>
+</div>

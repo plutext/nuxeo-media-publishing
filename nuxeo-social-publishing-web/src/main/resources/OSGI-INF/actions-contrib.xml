@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.ecm.social.publishing.web.actions">
+
+    <require>org.nuxeo.ecm.platform.actions</require>
+    <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
+    <require>org.nuxeo.ecm.platform.video.layouts</require>
+    
+    <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
+
+        <filter id="isSocialMedia">
+            <rule grant="true">
+                <facet>SocialMedia</facet>
+            </rule>
+        </filter>
+
+    </extension>
+
+    <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
+
+        <!-- add default publishing widget to publish tab layout -->
+        <action id="tree_widget_publish" type="widget" order="10">
+            <category>PUBLISH_PANEL_TOP</category>
+            <properties>
+                <property name="widgetName">publish_tree_widget</property>
+            </properties>
+        </action>
+
+        <!-- add social media widget to publish tab layout -->
+        <action id="social_media_widget_publish" type="widget" order="20">
+            <category>PUBLISH_PANEL_TOP</category>
+            <properties>
+                <property name="widgetName">publish_social_media_widget</property>
+            </properties>
+            <filter-id>isSocialMedia</filter-id>
+        </action>
+
+        <!-- add social media widget to summary layout -->
+        <action id="social_media_widget_summary" type="widget" order="400">
+            <category>SUMMARY_PANEL_LEFT</category>
+            <properties>
+                <property name="widgetName">summary_social_media_widget</property>
+            </properties>
+            <filter-id>isSocialMedia</filter-id>
+        </action>
+
+        <action id="OAuthTokens" link="/incl/oauth/user_oauth_tokens.xhtml" label="user.center.oauthtokens" order="55">
+            <category>USER_CENTER</category>
+            <filter-id>not_anonymous</filter-id>
+        </action>
+
+    </extension>
+
+</component>

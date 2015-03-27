@@ -1,0 +1,27 @@
+<component name="org.nuxeo.ecm.social.publishing.wistia.WistiaService">
+
+  <documentation>
+    Wistia Service
+  </documentation>
+
+  <implementation class="org.nuxeo.ecm.social.publishing.wistia.WistiaService" />
+
+  <service>
+    <provide interface="org.nuxeo.ecm.social.publishing.wistia.WistiaService" />
+  </service>
+
+    <extension-point name="configuration">
+        <documentation>
+            <code>
+                <configuration>
+                    <provider>Wistia</provider>
+                    <accountEmail>EMAIL</accountEmail>
+                    <clientId>CLIENT_ID</clientId>
+                    <clientSecret>CLIENT_SECRET</clientSecret>
+                </configuration>
+            </code>
+        </documentation>
+        <object class="org.nuxeo.ecm.social.publishing.wistia.WistiaConfigurationDescriptor" />
+    </extension-point>
+
+</component>

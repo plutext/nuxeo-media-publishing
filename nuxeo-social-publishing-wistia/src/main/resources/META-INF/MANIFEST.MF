@@ -1,0 +1,11 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Name: nuxeo-social-publishing-wistia
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Nuxeo
+Bundle-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: nuxeo-social-publishing-wistia
+Nuxeo-Component: OSGI-INF/wistia-service.xml,
+ OSGI-INF/social-media-provider-contrib.xml

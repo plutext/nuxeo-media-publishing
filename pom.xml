@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.nuxeo</groupId>
+    <artifactId>nuxeo-addons-parent</artifactId>
+    <version>7.3-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.nuxeo.ecm.social</groupId>
+  <artifactId>nuxeo-social-publishing</artifactId>
+  <name>Nuxeo Social Publishing Parent</name>
+  <description>Nuxeo Social Publishing Parent</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>nuxeo-social-publishing-core</module>
+    <module>nuxeo-social-publishing-web</module>
+    <module>nuxeo-social-publishing-wistia</module>
+    <module>nuxeo-social-publishing-youtube</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.nuxeo.ecm.social</groupId>
+        <artifactId>nuxeo-social-publishing-core</artifactId>
+        <version>7.3-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>public</id>
+      <url>http://maven.nuxeo.org/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>public-snapshot</id>
+      <url>http://maven.nuxeo.org/nexus/content/groups/public-snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <scm>
+    <connection>scm:git:git://github.com/nuxeo/nuxeo-social-publishing.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:nuxeo/nuxeo-social-publishing.git</developerConnection>
+    <url>https://github.com/nuxeo/nuxeo-social-publishing</url>
+  </scm>
+
+</project>

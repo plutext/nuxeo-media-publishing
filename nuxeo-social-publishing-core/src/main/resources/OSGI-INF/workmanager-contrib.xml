@@ -1,0 +1,11 @@
+<component name="org.nuxeo.ecm.social.publishing.workmanager">
+
+  <extension target="org.nuxeo.ecm.core.work.service" point="queues">
+    <queue id="socialMediaUpload">
+      <maxThreads>5</maxThreads>
+      <category>socialMediaUpload</category>
+    </queue>
+
+  </extension>
+
+</component>

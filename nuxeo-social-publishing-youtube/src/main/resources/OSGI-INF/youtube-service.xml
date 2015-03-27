@@ -1,0 +1,29 @@
+<component name="org.nuxeo.ecm.social.publishing.youtube.YouTubeService">
+
+  <requires>org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry</requires>
+
+  <documentation>
+    YouTube Service
+  </documentation>
+
+  <implementation class="org.nuxeo.ecm.social.publishing.youtube.YouTubeService" />
+
+  <service>
+    <provide interface="org.nuxeo.ecm.social.publishing.youtube.YouTubeService" />
+  </service>
+
+  <extension-point name="configuration">
+    <documentation>
+      <code>
+        <configuration>
+          <provider>YouTube</provider>
+          <accountEmail>EMAIL</accountEmail>
+          <clientId>CLIENT_ID</clientId>
+          <clientSecret>CLIENT_SECRET</clientSecret>
+        </configuration>
+      </code>
+    </documentation>
+    <object class="org.nuxeo.ecm.social.publishing.youtube.YouTubeConfigurationDescriptor" />
+  </extension-point>
+
+</component>
