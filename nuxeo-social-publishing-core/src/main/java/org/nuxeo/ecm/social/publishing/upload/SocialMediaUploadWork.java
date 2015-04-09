@@ -27,11 +27,12 @@ import org.nuxeo.ecm.social.publishing.adapter.SocialMedia;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Work for asynchronous social media upload.
  *
- * @since 7.2
+ * @since 7.3
  */
 public class SocialMediaUploadWork extends AbstractWork {
     public static final String CATEGORY_VIDEO_UPLOAD = "socialMediaUpload";
@@ -40,13 +41,15 @@ public class SocialMediaUploadWork extends AbstractWork {
     private final SocialMediaProvider service;
     private CoreSession loginSession;
     private String account;
+    private Map<String, String> options;
 
-    public SocialMediaUploadWork(String serviceId, SocialMediaProvider service, String repositoryName, String docId, CoreSession loginSession, String account) {
+    public SocialMediaUploadWork(String serviceId, SocialMediaProvider service, String repositoryName, String docId, CoreSession loginSession, String account, Map<String, String> options) {
         super(getIdFor(repositoryName, docId, serviceId));
         this.serviceId = serviceId;
         this.service = service;
         this.loginSession = loginSession;
         this.account = account;
+        this.options = options;
         setDocument(repositoryName, docId);
     }
 
@@ -95,8 +98,8 @@ public class SocialMediaUploadWork extends AbstractWork {
                     }
                 };
                 try {
-                    String mediaId = service.upload(media, listener, account);
-                    ArrayList<HashMap<String, Object>> providers = media.getProviders();
+                    String mediaId = service.upload(media, listener, account, options);
+                    ArrayList<Map<String, Object>> providers = media.getProviders();
                     HashMap<String, Object> entry = new HashMap<>(3);
                     entry.put(SocialMediaConstants.ID_PROPERTY_NAME, mediaId);
                     entry.put(SocialMediaConstants.PROVIDER_PROPERTY_NAME, serviceId);
@@ -105,9 +108,10 @@ public class SocialMediaUploadWork extends AbstractWork {
                     boolean providerExists = false;
                     // Check if provider already exists
                     // if so replace entry, otherwise add
-                    for (HashMap<String, Object> e : providers) {
+                    for (Map<String, Object> e : providers) {
                         if (e.containsValue(serviceId)) {
                             e.replace(SocialMediaConstants.ID_PROPERTY_NAME, mediaId);
+                            e.replace(SocialMediaConstants.ACCOUNT_PROPERTY_NAME, account);
                             providerExists = true;
                         }
                     }

@@ -1,0 +1,20 @@
+<div xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://xmlns.jcp.org/jsf/core"
+     xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+    <h:outputLabel style="margin: 5px 0; display: block">
+        Privacy status:
+    </h:outputLabel>
+    <h:selectOneMenu value="#{value['privacyStatus']}">
+        <f:selectItem itemValue="unlisted" itemLabel="Unlisted" />
+        <f:selectItem itemValue="private" itemLabel="Private" />
+        <f:selectItem itemValue="public" itemLabel="Public" />
+    </h:selectOneMenu>
+
+    <h:outputLabel style="margin: 5px 0; display: block">
+        Tags:
+    </h:outputLabel>
+    <h:inputText value="#{value['tags']}" a:placeholder="Tags separated with a comma">
+
+    </h:inputText>
+</div>

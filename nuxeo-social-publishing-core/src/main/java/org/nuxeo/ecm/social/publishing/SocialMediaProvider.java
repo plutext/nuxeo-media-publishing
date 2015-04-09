@@ -21,7 +21,8 @@ import org.nuxeo.ecm.social.publishing.adapter.SocialMedia;
 import org.nuxeo.ecm.social.publishing.upload.SocialMediaUploadProgressListener;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface to be implemented by Social Media Providers.
@@ -33,7 +34,7 @@ public interface SocialMediaProvider {
     /**
      * Upload the media
      */
-    String upload(SocialMedia media, SocialMediaUploadProgressListener progressListener, String account) throws IOException;
+    String upload(SocialMedia media, SocialMediaUploadProgressListener progressListener, String account, Map<String, String> options) throws IOException;
 
     /**
      * Retrieve the URL for the published media
@@ -48,10 +49,12 @@ public interface SocialMediaProvider {
     /**
      * Retrieve a map of statistics (depends on the provider)
      */
-    HashMap<String, String> getStats(String mediaId, String account);
+    Map<String, String> getStats(String mediaId, String account);
 
     /**
      * Returns the URL that should be used to start the authorization flow
      */
     String getAuthorizationURL(String serverURL);
+
+    List getProjects(String account);
 }

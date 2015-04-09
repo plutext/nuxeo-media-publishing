@@ -26,7 +26,11 @@ import org.nuxeo.ecm.social.publishing.upload.SocialMediaUploadWork;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
+import java.util.Map;
 
+/**
+ * @since 7.3
+ */
 public class SocialPublishingServiceImpl extends DefaultComponent implements SocialPublishingService {
 
     protected static final Log log = LogFactory.getLog(SocialPublishingServiceImpl.class);
@@ -46,14 +50,14 @@ public class SocialPublishingServiceImpl extends DefaultComponent implements Soc
     }
 
     @Override
-    public String publish(DocumentModel doc, String serviceId, String account) {
+    public String publish(DocumentModel doc, String serviceId, String account, Map<String, String> options) {
         SocialMediaProvider service = getProvider(serviceId);
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
         if (workManager == null) {
             throw new RuntimeException("No WorkManager available");
         }
 
-        Work work = new SocialMediaUploadWork(serviceId, service, doc.getRepositoryName(), doc.getId(), doc.getCoreSession(), account);
+        Work work = new SocialMediaUploadWork(serviceId, service, doc.getRepositoryName(), doc.getId(), doc.getCoreSession(), account, options);
         workManager.schedule(work, WorkManager.Scheduling.IF_NOT_RUNNING_OR_SCHEDULED);
         return work.getId();
     }

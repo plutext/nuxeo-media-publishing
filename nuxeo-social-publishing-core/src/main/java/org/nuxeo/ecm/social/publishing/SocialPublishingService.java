@@ -18,7 +18,11 @@
 package org.nuxeo.ecm.social.publishing;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
+import java.util.Map;
 
+/**
+ * @since 7.3
+ */
 public interface SocialPublishingService {
 
     /**
@@ -32,7 +36,7 @@ public interface SocialPublishingService {
      * @param provider the id of the social media provider
      * @return the id of the publishing work
      */
-    String publish(DocumentModel doc, String provider, String account);
+    String publish(DocumentModel doc, String provider, String account, Map<String, String> options);
 
     SocialMediaProvider getProvider(String provider);
 }

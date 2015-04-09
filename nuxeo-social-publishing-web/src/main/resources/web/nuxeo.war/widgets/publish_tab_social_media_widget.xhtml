@@ -1,95 +1,111 @@
 <div xmlns:h="http://java.sun.com/jsf/html"
      xmlns:f="http://java.sun.com/jsf/core"
      xmlns:c="http://java.sun.com/jstl/core"
-     xmlns:nxu="http://nuxeo.org/nxweb/util"
-     xmlns:a4j="http://richfaces.org/a4j">
+     xmlns:nxl="http://nuxeo.org/nxforms/layout"
+     xmlns:a4j="http://richfaces.org/a4j"
+     xmlns:nxu="http://nuxeo.org/nxweb/util">
 
     <h:form>
         <a4j:region>
             <a4j:poll id="poll" interval="10000" enabled="true" render="poll,providers" />
         </a4j:region>
-    </h:form>
 
-    <h:form id="document_view" enctype="multipart/form-data" ajaxSubmit="true">
-        <h:panelGroup id="providers">
-            <nxu:repeat var="uploadService" items="#{socialPublishing.getAvailableServices(value)}" varStatus="status">
-                <nxu:set var="uploadStatus"
-                         value="#{socialPublishing.getUploadStatus(value, uploadService)}">
-                    <div style="margin-bottom: 10px">
-                        <h:outputText value="#{uploadService}" styleClass="labelColumn" style="display: inline-block; width: 125px"/>
-
-                        <c:if test="#{not empty uploadStatus}">
-                                <h:outputText value="#{socialPublishing.getStatusMessageFor(uploadStatus)}"/>
-                        </c:if>
-                        <c:if test="#{empty uploadStatus}">
-                            <c:set var="providerAccounts" value="#{oauthUserTokens.getProviderAccounts(uploadService)}"/>
-
-                            <c:if test="#{not empty providerAccounts}">
-                                <a href="##{uploadService}_social_publish_popup" class="button smallButton social_openPopup">
-                                    <h:outputText value="#{messages['action.socialMedia.republish']}" rendered="#{socialPublishing.isPublished(value, uploadService)}"/>
-                                    <h:outputText value="#{messages['action.socialMedia.publish']}" rendered="#{not socialPublishing.isPublished(value, uploadService)}"/>
-                                </a>
-                                <div style="display:none">
-                                    <div id="#{uploadService}_social_publish_popup">
-                                        <h3>
-                                            <h:outputText value="Select a #{uploadService} account"/>
-                                        </h3>
-                                        <h:selectOneMenu style="margin: 10px 0" onchange="updateAccount(this.value)">
-                                            <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true" />
-                                            <f:selectItems var="entry" value="#{providerAccounts}" itemLabel="#{entry.oauth2Token.nuxeoLogin}" itemValue="#{entry.oauth2Token.nuxeoLogin}" />
-                                        </h:selectOneMenu>
-                                        <h:form>
-                                            <h:commandButton value="#{messages['action.socialMedia.republish']}"
-                                                             action="#{socialPublishing.publish(uploadService)}"
-                                                             class="button smallButton"
-                                                             style="display: block"
-                                                             rendered="#{isMediaPublished}">
-                                                <a4j:ajax execute="@this" render="@form providers" oncomplete="jQuery.fancybox.close();" />
-                                            </h:commandButton>
-
-                                            <h:commandButton value="#{messages['action.socialMedia.publish']}"
-                                                             action="#{socialPublishing.publish(uploadService)}"
-                                                             class="button smallButton"
-                                                             style="display: block"
-                                                             rendered="#{not isMediaPublished}">
-                                                <a4j:ajax execute="@this" render="@form providers" oncomplete="jQuery.fancybox.close();" />
-                                            </h:commandButton>
-                                        </h:form>
-                                    </div>
-                                </div>
-                            </c:if>
-
-                            <c:if test="#{empty providerAccounts}">
-                                <p style="display: inline-block;">
-                                    #{messages['error.socialMedia.emptyAccounts']}
-                                </p>
-                            </c:if>
-                     </c:if>
-                    </div>
-                </nxu:set>
-            </nxu:repeat>
-
-            <script type="text/javascript">
-                jQuery(document).ready(function() {
-                    var config = {
-                        'autoScale'          : true,
-                        'autoDimensions'     : true,
-                        'transitionIn'       : 'none',
-                        'transitionOut'      : 'none',
-                        'type'               : 'inline',
-                        'enableEscapeButton' : true,
-                        'centerOnScroll'     : true
-                    };
-                    jQuery(".social_openPopup").fancybox(config);
-                });
-            </script>
-
-        </h:panelGroup>
-    </h:form>
-
-    <h:form>
-        <a4j:jsFunction name="updateAccount">
-            <a4j:param name="account" assignTo="#{socialPublishing.selectedAccount}"  />
+        <a4j:jsFunction name="clearAccount" render="providers">
+            <a4j:param name="account" value="" assignTo="#{socialPublishing.selectedAccount}"/>
         </a4j:jsFunction>
     </h:form>
+
+    <h:panelGroup id="providers">
+        <c:set var="doc" value="#{socialPublishing.currentDoc}" scope="request"/>
+        <c:forEach var="provider" items="#{socialPublishing.getAvailableServices(doc)}">
+            <c:set var="uploadStatus" value="#{socialPublishing.getUploadStatus(doc, provider)}"/>
+
+            <div style="margin-bottom: 10px">
+                <h:outputText value="#{provider}" styleClass="labelColumn" style="display: inline-block; width: 125px"/>
+
+                <c:if test="#{not empty uploadStatus}">
+                        <h:outputText value="#{socialPublishing.getStatusMessageFor(uploadStatus)}"/>
+                </c:if>
+
+                <c:if test="#{empty uploadStatus}">
+                    <c:set var="providerAccounts" value="#{oauthUserTokens.getProviderAccounts(provider)}"/>
+
+                    <c:if test="#{not empty providerAccounts}">
+                        <a href="##{provider}_social_publish_popup" class="button smallButton social_openPopup">
+                            <h:outputText value="#{messages['action.socialMedia.republish']}" rendered="#{socialPublishing.isPublished(doc, provider)}"/>
+                            <h:outputText value="#{messages['action.socialMedia.publish']}" rendered="#{not socialPublishing.isPublished(doc, provider)}"/>
+                        </a>
+                        <div style="display:none">
+                            <div id="#{provider}_social_publish_popup">
+                                <h:form enctype="multipart/form-data" ajaxSubmit="true">
+                                    <h3>
+                                        <h:outputText value="Upload to #{provider}"/>
+                                    </h3>
+
+                                    <h:outputLabel style="margin: 5px 0; display: block">
+                                        #{provider} account:
+                                    </h:outputLabel>
+
+                                    <h:selectOneMenu value="#{socialPublishing.selectedAccount}" required="true" requiredMessage="Please select an account">
+                                        <f:selectItem itemLabel="Select a value..." itemValue="#{null}" />
+                                        <f:selectItems var="entry"
+                                                       value="#{providerAccounts}"
+                                                       itemLabel="#{entry.oauth2Token.nuxeoLogin} - #{entry.oauth2Token.serviceLogin}"
+                                                       itemValue="#{entry.oauth2Token.serviceLogin}" />
+                                        <a4j:ajax event="change" execute="@this" render="#{provider}_optionsPanel"/>
+                                    </h:selectOneMenu>
+
+                                    <nxu:set var="providerOptionsWidgets"
+                                             value="#{socialPublishing.getProviderOptionsWidgets(provider)}"
+                                             cache="true">
+
+                                        <h:panelGroup id="#{provider}_optionsPanel">
+                                            <c:forEach var="optionWidget" items="#{providerOptionsWidgets}">
+                                                <nxl:widget mode="any" name="#{optionWidget.properties.widgetName}" value="#{socialPublishing.options}"/>
+                                            </c:forEach>
+                                        </h:panelGroup>
+                                    </nxu:set>
+
+                                    <h:commandButton value="#{messages['action.socialMedia.publish']}"
+                                                     action="#{socialPublishing.publish(provider)}"
+                                                     class="button smallButton"
+                                                     style="display: block">
+                                        <a4j:ajax execute="@form" render="@form" oncomplete="jQuery.fancybox.close();" />
+                                    </h:commandButton>
+                                </h:form>
+                            </div>
+                        </div>
+                    </c:if>
+
+                    <c:if test="#{empty providerAccounts}">
+                        <p style="display: inline-block;">
+                            #{messages['error.socialMedia.emptyAccounts']}
+                        </p>
+                    </c:if>
+                </c:if>
+            </div>
+        </c:forEach>
+
+        <script type="text/javascript">
+            jQuery(document).ready(function() {
+
+                function clearSelectedAccount() {
+                    clearAccount();
+                }
+
+                var config = {
+                    'autoScale'          : true,
+                    'autoDimensions'     : true,
+                    'transitionIn'       : 'none',
+                    'transitionOut'      : 'none',
+                    'type'               : 'inline',
+                    'enableEscapeButton' : true,
+                    'centerOnScroll'     : true,
+                    'onClosed'           : clearSelectedAccount
+                };
+                jQuery(".social_openPopup").fancybox(config);
+            });
+        </script>
+
+    </h:panelGroup>
 </div>

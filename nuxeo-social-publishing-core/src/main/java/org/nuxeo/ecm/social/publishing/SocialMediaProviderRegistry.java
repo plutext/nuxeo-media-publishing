@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @since 7.3
+ */
 public class SocialMediaProviderRegistry extends ContributionFragmentRegistry<SocialMediaProviderDescriptor> {
 
     protected final Map<String, SocialMediaProviderDescriptor> providers = new HashMap<>();
@@ -64,7 +67,6 @@ public class SocialMediaProviderRegistry extends ContributionFragmentRegistry<So
     }
 
     public SocialMediaProviderDescriptor lookup(String provider) {
-        //return getContribution(provider);
         return providers.get(provider);
     }
 }

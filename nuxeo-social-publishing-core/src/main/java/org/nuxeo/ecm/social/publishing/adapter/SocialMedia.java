@@ -21,8 +21,11 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * @since 7.3
+ */
 public interface SocialMedia {
     String getProvider() throws ClientException;
 
@@ -48,5 +51,5 @@ public interface SocialMedia {
 
     String getEmbedCode(String provider);
 
-    HashMap<String, String> getStats(String provider);
+    Map<String, String> getStats(String provider);
 }

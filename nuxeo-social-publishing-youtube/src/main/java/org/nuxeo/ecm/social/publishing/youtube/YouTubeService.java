@@ -39,7 +39,6 @@ import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry;
-import org.nuxeo.ecm.platform.web.common.vh.VirtualHostHelper;
 import org.nuxeo.ecm.social.publishing.SocialMediaProvider;
 import org.nuxeo.ecm.social.publishing.adapter.SocialMedia;
 import org.nuxeo.ecm.social.publishing.upload.SocialMediaUploadProgressListener;
@@ -50,11 +49,13 @@ import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Youtube Social Media Provider Service
+ *
+ * @since 7.3
+ */
 public class YouTubeService extends DefaultComponent implements SocialMediaProvider {
     private static final Log log = LogFactory.getLog(YouTubeService.class);
 
@@ -104,7 +105,7 @@ public class YouTubeService extends DefaultComponent implements SocialMediaProvi
         authorizationUrl.setRedirectUri(redirectUrl);
 
         // request offline access and force consent screen
-        return authorizationUrl.build() + "&access_type=offline&approval_prompt=force";
+        return authorizationUrl.build();
     }
 
     protected NuxeoOAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
@@ -121,7 +122,7 @@ public class YouTubeService extends DefaultComponent implements SocialMediaProvi
                         oauth2Provider = oauth2ProviderRegistry.addProvider(
                             providerName,
                             GoogleOAuthConstants.TOKEN_SERVER_URL,
-                            GoogleOAuthConstants.AUTHORIZATION_SERVER_URL,
+                            GoogleOAuthConstants.AUTHORIZATION_SERVER_URL + "?access_type=offline&approval_prompt=force",
                             clientId, clientSecret,
                             Arrays.asList(YouTubeScopes.YOUTUBE));
                     } catch (Exception e) {
@@ -173,7 +174,7 @@ public class YouTubeService extends DefaultComponent implements SocialMediaProvi
     }
 
     @Override
-    public String upload(SocialMedia media, SocialMediaUploadProgressListener progressListener, String account) throws IOException {
+    public String upload(SocialMedia media, SocialMediaUploadProgressListener progressListener, String account, Map<String, String> options) throws IOException {
 
         MediaHttpUploaderProgressListener mediaUploaderListener = new MediaHttpUploaderProgressListener() {
             @Override
@@ -199,7 +200,12 @@ public class YouTubeService extends DefaultComponent implements SocialMediaProvi
         Video youtubeVideo = new Video();
 
         VideoStatus status = new VideoStatus();
-        status.setPrivacyStatus("unlisted");
+        String privacyStatus = options.get("privacyStatus");
+        if (privacyStatus != null) {
+            status.setPrivacyStatus(privacyStatus);
+        } else {
+            status.setPrivacyStatus("unlisted");
+        }
         youtubeVideo.setStatus(status);
 
         VideoSnippet snippet = new VideoSnippet();
@@ -207,6 +213,10 @@ public class YouTubeService extends DefaultComponent implements SocialMediaProvi
         snippet.setDescription(media.getDescription());
 
         List<String> tags = new ArrayList<>();
+        String inputTags = options.get("tags");
+        if (inputTags != null) {
+            tags.addAll(Arrays.asList(inputTags.split("\\s*,\\s*")));
+        }
         snippet.setTags(tags);
 
         youtubeVideo.setSnippet(snippet);
@@ -232,14 +242,14 @@ public class YouTubeService extends DefaultComponent implements SocialMediaProvi
     }
 
     @Override
-    public HashMap<String, String> getStats(String mediaId, String account) {
+    public Map<String, String> getStats(String mediaId, String account) {
         try {
             VideoStatistics stats = getYouTubeClient(account).getStatistics(mediaId);
             if (stats == null) {
                 return null;
             }
 
-            HashMap<String, String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             map.put("Views", stats.getViewCount().toString());
             map.put("Comments", stats.getCommentCount().toString());
             map.put("Likes", stats.getLikeCount().toString());
@@ -252,5 +262,8 @@ public class YouTubeService extends DefaultComponent implements SocialMediaProvi
         }
     }
 
-
+    @Override
+    public List getProjects(String account) {
+        return null;
+    }
 }

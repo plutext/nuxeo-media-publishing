@@ -20,6 +20,9 @@ package org.nuxeo.ecm.social.publishing;
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
 
+/**
+ * @since 7.3
+ */
 @XObject("provider")
 public class SocialMediaProviderDescriptor {
 

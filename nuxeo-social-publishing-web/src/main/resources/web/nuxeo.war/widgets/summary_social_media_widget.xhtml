@@ -1,22 +1,21 @@
 <div xmlns:h="http://java.sun.com/jsf/html"
-        xmlns:c="http://java.sun.com/jstl/core"
-        xmlns:f="http://java.sun.com/jsf/core"
-        class="content_block">
+     xmlns:c="http://java.sun.com/jstl/core"
+     class="content_block">
 
     <h3 class="summaryTitle">#{messages['heading.socialMedia']}</h3>
 
-    <c:forEach var="uploadService" items="#{socialPublishing.getAvailableServices(value)}" varStatus="status">
+    <c:forEach var="provider" items="#{socialPublishing.getAvailableServices(value)}" varStatus="status">
 
-        <c:set var="isMediaPublished" value="#{socialPublishing.isPublished(value, uploadService)}"/>
+        <c:set var="isMediaPublished" value="#{socialPublishing.isPublished(value, provider)}"/>
         <c:if test="#{isMediaPublished}">
-            <c:set var="mediaUrl" value="#{socialPublishing.getPublishedURL(value, uploadService)}"/>
-            <c:set var="mediaEmbedCode" value="#{socialPublishing.getEmbedCode(value, uploadService)}" />
-            <c:set var="mediaStats" value="#{socialPublishing.getStats(value, uploadService)}" />
+            <c:set var="mediaUrl" value="#{socialPublishing.getPublishedURL(value, provider)}"/>
+            <c:set var="mediaEmbedCode" value="#{socialPublishing.getEmbedCode(value, provider)}" />
+            <c:set var="mediaStats" value="#{socialPublishing.getStats(value, provider)}" />
         </c:if>
 
         <div class="clear">
             <div class="labelColumn" style="float: left;">
-                #{uploadService}
+                #{provider}
             </div>
             <span>
                 <c:choose>
@@ -27,21 +26,21 @@
                             <h:outputLink value="#"
                                           styleClass="button smallButton"
                                           rendered="#{not empty mediaUrl}"
-                                          onclick="toggleUrl('#{uploadService}'); return false;">
+                                          onclick="toggleUrl('#{provider}'); return false;">
                                 #{messages['action.socialMedia.externalLink']}
                             </h:outputLink>
 
                             <h:outputLink value="#"
                                           styleClass="button smallButton"
                                           rendered="#{not empty mediaEmbedCode}"
-                                          onclick="toggleEmbedCode('#{uploadService}'); return false;">
+                                          onclick="toggleEmbedCode('#{provider}'); return false;">
                                 #{messages['action.socialMedia.embedCode']}
                             </h:outputLink>
 
                             <h:outputLink value="#"
                                           styleClass="button smallButton"
                                           rendered="#{not empty mediaStats}"
-                                          onclick="toggleStats('#{uploadService}'); return false;">
+                                          onclick="toggleStats('#{provider}'); return false;">
                                 #{messages['action.socialMedia.stats']}
                             </h:outputLink>
                         </span>
@@ -56,18 +55,18 @@
         </div>
         <c:if test="#{isMediaPublished}">
             <div style="margin: 15px auto">
-                <h:inputText class="#{uploadService}_externalUrl"
+                <h:inputText class="#{provider}_externalUrl"
                              value="#{mediaUrl}"
                              readonly="true" onclick="javascript:this.focus();this.select();" size="120"
                              style="display: none; border-style: dashed; font-family: Courier; font-size: 12px; line-height: 1.4em;"/>
 
-                <h:inputTextarea class="#{uploadService}_embedCode"
+                <h:inputTextarea class="#{provider}_embedCode"
                                  value="#{mediaEmbedCode}"
                                  readonly="true" onclick="javascript:this.focus();this.select();" cols="120" rows="5"
                                  style="display: none; border-style: dashed; font-family: Courier; font-size: 12px; line-height: 1.4em; resize: vertical"/>
 
                 <c:if test="#{not empty mediaStats}">
-                    <div class="#{uploadService}_stats"
+                    <div class="#{provider}_stats"
                          style="display:none; border: 1px dashed #c6c6c6;clear: both;background: #fff;padding: 5px;font-size: 12px;">
                         <table width="100%" cellspacing="0" style="text-align: center">
                             <tbody>

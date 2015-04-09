@@ -29,21 +29,31 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.work.api.Work;
 import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.ecm.platform.actions.Action;
+import org.nuxeo.ecm.platform.actions.ActionContext;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
+import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.social.publishing.adapter.SocialMedia;
 import org.nuxeo.ecm.social.publishing.upload.SocialMediaUploadWork;
+import org.nuxeo.ecm.webapp.action.ActionContextProvider;
 import org.nuxeo.ecm.webapp.helpers.ResourcesAccessor;
 import org.nuxeo.runtime.api.Framework;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * @since 7.3
+ */
 @Name("socialPublishing")
 @Scope(ScopeType.EVENT)
 public class SocialPublishingActions implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String SOCIAL_PUBLISHING_OPTIONS_CATEGORY = "SOCIAL_PUBLISHING_OPTIONS_CATEGORY";
 
     private static final Log log = LogFactory.getLog(SocialPublishingActions.class);
 
@@ -52,6 +62,12 @@ public class SocialPublishingActions implements Serializable {
 
     @In(create = true, required = false)
     protected transient FacesMessages facesMessages;
+
+    @In(create = true, required = false)
+    protected transient ActionContextProvider actionContextProvider;
+
+    @In(create = true, required = false)
+    protected transient WebActions webActions;
 
     @In(create = true)
     protected transient ResourcesAccessor resourcesAccessor;
@@ -67,10 +83,15 @@ public class SocialPublishingActions implements Serializable {
 
     private Map<String, String> providersEmbedCode;
 
+    Map<String, String> options;
+
+    private DocumentModel currentDoc;
+
     public SocialPublishingActions() {
         providersStats = new HashMap<>();
         providersEmbedCode = new HashMap<>();
         providersURL = new HashMap<>();
+        options = new HashMap<>();
     }
 
     public String[] getAvailableServices(DocumentModel doc) {
@@ -117,7 +138,8 @@ public class SocialPublishingActions implements Serializable {
         if (selectedAccount == null || selectedAccount.length() == 0) {
             return;
         }
-        getSocialPublishingService().publish(doc, provider, selectedAccount);
+        getSocialPublishingService().publish(doc, provider, selectedAccount, options);
+        selectedAccount = null;
     }
 
     public String getEmbedCode(DocumentModel doc, String provider) {
@@ -137,7 +159,6 @@ public class SocialPublishingActions implements Serializable {
             stats = media.getStats(provider);
             providersStats.put(provider, stats);
         }
-
         return stats;
     }
 
@@ -164,6 +185,31 @@ public class SocialPublishingActions implements Serializable {
 
     public void setSelectedAccount(String selectedAccount) {
         this.selectedAccount = selectedAccount;
+    }
+
+    public DocumentModel getCurrentDoc() {
+        if (currentDoc == null) {
+            currentDoc = navigationContext.getCurrentDocument();
+            currentDoc.refresh();
+        }
+        return currentDoc;
+    }
+
+    /**
+     * Helper to retrieve Options widgets for a given Publishing provider
+     */
+    public List<Action> getProviderOptionsWidgets(String provider) {
+        ActionContext ctx = actionContextProvider.createActionContext();
+        ctx.putLocalVariable("provider", provider);
+        return webActions.getActionsList(SOCIAL_PUBLISHING_OPTIONS_CATEGORY, ctx);
+    }
+
+    public Map<String, String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(Map<String, String> options) {
+        this.options = options;
     }
 
     /**
@@ -209,5 +255,4 @@ public class SocialPublishingActions implements Serializable {
             return queueSize;
         }
     }
-
 }

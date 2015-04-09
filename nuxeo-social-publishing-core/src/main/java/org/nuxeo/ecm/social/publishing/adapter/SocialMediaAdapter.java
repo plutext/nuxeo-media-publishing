@@ -27,8 +27,11 @@ import org.nuxeo.ecm.social.publishing.SocialPublishingService;
 import org.nuxeo.runtime.api.Framework;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * @since 7.3
+ */
 public class SocialMediaAdapter implements SocialMedia {
     final DocumentModel doc;
 
@@ -43,8 +46,8 @@ public class SocialMediaAdapter implements SocialMedia {
 
     @Override
     public boolean isPublishedByProvider(String provider) throws ClientException {
-        ArrayList<HashMap<String, Object>> providers = getProviders();
-        for (HashMap<String, Object> entry : providers) {
+        ArrayList<Map<String, Object>> providers = getProviders();
+        for (Map<String, Object> entry : providers) {
             if (entry.containsValue(provider))
                 return true;
         }
@@ -63,7 +66,7 @@ public class SocialMediaAdapter implements SocialMedia {
 
     @Override
     public String getId(String provider) throws ClientException {
-        HashMap<String, Object> entry = getProviderEntry(provider);
+        Map<String, Object> entry = getProviderEntry(provider);
         if (entry == null) {
             return null;
         }
@@ -72,7 +75,7 @@ public class SocialMediaAdapter implements SocialMedia {
 
     @Override
     public String getAccount(String provider) throws ClientException {
-        HashMap<String, Object> entry = getProviderEntry(provider);
+        Map<String, Object> entry = getProviderEntry(provider);
         if (entry == null) {
             return null;
         }
@@ -111,7 +114,7 @@ public class SocialMediaAdapter implements SocialMedia {
     }
 
     @Override
-    public HashMap<String, String> getStats(String provider) {
+    public Map<String, String> getStats(String provider) {
         return getSocialMediaProvider(provider).getStats(getId(provider), getAccount(provider));
     }
 
@@ -123,9 +126,9 @@ public class SocialMediaAdapter implements SocialMedia {
         return Framework.getService(SocialPublishingService.class);
     }
 
-    private HashMap<String, Object> getProviderEntry(String provider) {
-        ArrayList<HashMap<String, Object>> providers = (ArrayList) doc.getPropertyValue(SocialMediaConstants.PROVIDERS_PROPERTY_NAME);
-        for (HashMap<String, Object> entry : providers) {
+    private Map<String, Object> getProviderEntry(String provider) {
+        ArrayList<Map<String, Object>> providers = (ArrayList) doc.getPropertyValue(SocialMediaConstants.PROVIDERS_PROPERTY_NAME);
+        for (Map<String, Object> entry : providers) {
             if (entry.containsValue(provider)) {
                 return entry;
             }

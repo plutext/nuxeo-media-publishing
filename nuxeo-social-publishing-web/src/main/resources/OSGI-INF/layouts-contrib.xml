@@ -2,7 +2,6 @@
 <component name="org.nuxeo.ecm.social.publishing.web.layouts">
 
     <!-- layouts -->
-
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
 
         <layout name="publish_layout">
@@ -22,7 +21,6 @@
     </extension>
 
     <!-- widgets -->
-
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
                point="widgets">
 
@@ -63,10 +61,29 @@
             </labels>
         </widget>
 
+        <widget name="youtube_options_widget" type="template">
+            <handlingLabels>true</handlingLabels>
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="template">/widgets/youtube_options_widget.xhtml</property>
+            </properties>
+        </widget>
+
+        <widget name="wistia_options_widget" type="template">
+            <handlingLabels>true</handlingLabels>
+            <labels>
+                <label mode="any"></label>
+            </labels>
+            <properties widgetMode="any">
+                <property name="template">/widgets/wistia_options_widget.xhtml</property>
+            </properties>
+        </widget>
+
     </extension>
 
     <!-- widget types -->
-
     <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="widgettypes">
 
         <widgetType name="publish_tree">

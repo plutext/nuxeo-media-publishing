@@ -47,6 +47,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Wistia Social Media Provider Service
@@ -146,17 +149,28 @@ public class WistiaService extends DefaultComponent implements SocialMediaProvid
             AuthorizationCodeFlow flow = getOAuth2ServiceProvider().getAuthorizationCodeFlow(HTTP_TRANSPORT, JSON_FACTORY);
             try {
                 credential = flow.loadCredential(account);
+                if (credential != null) {
+                    // Refresh access token if needed (based on com.google.api.client.auth.oauth.Credential.intercept())
+                    // TODO: rely on Google Oauth aware client instead
+                    Long expiresIn = credential.getExpiresInSeconds();
+                    // check if token will expire in a minute
+                    if (credential.getAccessToken() == null || expiresIn != null && expiresIn <= 60) {
+                        credential.refreshToken();
+                        if (credential.getAccessToken() == null) {
+                            // nothing we can do without an access token
+                            throw new ClientException("Failed to refresh access token");
+                        }
+                    }
+                }
+                else {
+                    throw new ClientException("Failed to get Wistia credentials");
+                }
             } catch (IOException e) {
                 throw new ClientException(e.getMessage());
             }
         }
 
-        if (credential != null && credential.getAccessToken() != null) {
-            wistiaClient = new WistiaClient(credential.getAccessToken());
-        } else {
-            throw new ClientException("Failed to get Wistia credentials");
-        }
-
+        wistiaClient = new WistiaClient(credential.getAccessToken());
         return wistiaClient;
     }
 
@@ -165,11 +179,17 @@ public class WistiaService extends DefaultComponent implements SocialMediaProvid
     }
 
     @Override
-    public String upload(SocialMedia media, SocialMediaUploadProgressListener progressListener, String account) throws IOException {
+    public String upload(SocialMedia media, SocialMediaUploadProgressListener progressListener, String account, Map<String, String> options) throws IOException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
 
         params.putSingle("name", media.getTitle());
         params.putSingle("description", media.getDescription());
+
+        for (Entry<String, String> entry : options.entrySet()) {
+            if (entry.getValue() != null && entry.getValue().length() > 0) {
+                params.putSingle(entry.getKey(), entry.getValue());
+            }
+        }
 
         // upload original video
         Blob blob = media.getBlob();
@@ -190,18 +210,23 @@ public class WistiaService extends DefaultComponent implements SocialMediaProvid
     }
 
     @Override
-    public HashMap<String, String> getStats(String mediaId, String account) {
+    public Map<String, String> getStats(String mediaId, String account) {
         Stats stats = getWistiaClient(account).getMediaStats(mediaId);
         if (stats == null) {
             return null;
         }
 
-        HashMap<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("Visitors", Integer.toString(stats.getVisitors()));
         map.put("Plays", Integer.toString(stats.getPlays()));
         map.put("Average % Watched", Integer.toString(stats.getAveragePercentWatched()));
         map.put("Page Loads", Integer.toString(stats.getPageLoads()));
         map.put("% of visitors clicking play", Integer.toString(stats.getPercentOfVisitorsClickingPlay()));
         return map;
+    }
+
+    @Override
+    public List getProjects(String account) {
+        return getWistiaClient(account).getProjects();
     }
 }
