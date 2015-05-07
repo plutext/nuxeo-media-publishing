@@ -1,4 +1,4 @@
-# Nuxeo Social Publishing
+# Nuxeo Media Publishing
 
 Nuxeo addon for publishing media (only videos for now) to external services.
 

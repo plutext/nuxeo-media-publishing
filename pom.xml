@@ -6,24 +6,24 @@
     <version>7.3-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.nuxeo.ecm.social</groupId>
-  <artifactId>nuxeo-social-publishing</artifactId>
-  <name>Nuxeo Social Publishing Parent</name>
-  <description>Nuxeo Social Publishing Parent</description>
+  <groupId>org.nuxeo.ecm.media.publishing</groupId>
+  <artifactId>nuxeo-media-publishing</artifactId>
+  <name>Nuxeo Media Publishing Parent</name>
+  <description>Nuxeo Media Publishing Parent</description>
   <packaging>pom</packaging>
 
   <modules>
-    <module>nuxeo-social-publishing-core</module>
-    <module>nuxeo-social-publishing-web</module>
-    <module>nuxeo-social-publishing-wistia</module>
-    <module>nuxeo-social-publishing-youtube</module>
+    <module>nuxeo-media-publishing-core</module>
+    <module>nuxeo-media-publishing-web</module>
+    <module>nuxeo-media-publishing-wistia</module>
+    <module>nuxeo-media-publishing-youtube</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.nuxeo.ecm.social</groupId>
-        <artifactId>nuxeo-social-publishing-core</artifactId>
+        <groupId>org.nuxeo.ecm.media.publishing</groupId>
+        <artifactId>nuxeo-media-publishing-core</artifactId>
         <version>7.3-SNAPSHOT</version>
       </dependency>
     </dependencies>
@@ -53,9 +53,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:git:git://github.com/nuxeo/nuxeo-social-publishing.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:nuxeo/nuxeo-social-publishing.git</developerConnection>
-    <url>https://github.com/nuxeo/nuxeo-social-publishing</url>
+    <connection>scm:git:git://github.com/nuxeo/nuxeo-media-publishing.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:nuxeo/nuxeo-media-publishing.git</developerConnection>
+    <url>https://github.com/nuxeo/nuxeo-media-publishing</url>
   </scm>
 
 </project>
