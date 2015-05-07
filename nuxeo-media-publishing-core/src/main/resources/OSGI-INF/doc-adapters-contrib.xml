@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<component name="org.nuxeo.ecm.social.publishing.core.adapters">
+<component name="org.nuxeo.ecm.media.publishing.core.adapters">
 
   <extension target="org.nuxeo.ecm.core.api.DocumentAdapterService" point="adapters">
-    <adapter class="org.nuxeo.ecm.social.publishing.adapter.SocialMedia"
-             factory="org.nuxeo.ecm.social.publishing.adapter.SocialMediaAdapterFactory" />
+    <adapter class="org.nuxeo.ecm.media.publishing.adapter.PublishableMedia"
+             factory="org.nuxeo.ecm.media.publishing.adapter.PublishableMediaAdapterFactory" />
   </extension>
 
 </component>

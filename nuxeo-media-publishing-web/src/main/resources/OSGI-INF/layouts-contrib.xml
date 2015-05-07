@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<component name="org.nuxeo.ecm.social.publishing.web.layouts">
+<component name="org.nuxeo.ecm.media.publishing.web.layouts">
 
   <!-- layouts -->
   <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
@@ -44,7 +44,7 @@
       </controls>
     </widget>
 
-    <widget name="summary_social_media_widget" type="summary_social_media_type">
+    <widget name="summary_media_publishing_widget" type="summary_media_publishing_type">
       <handlingLabels>true</handlingLabels>
       <labels>
         <label mode="any"></label>
@@ -54,7 +54,7 @@
       </controls>
     </widget>
 
-    <widget name="publish_social_media_widget" type="publish_social_media_type">
+    <widget name="publish_media_widget" type="publish_media_type">
       <handlingLabels>true</handlingLabels>
       <labels>
         <label mode="any"></label>
@@ -95,27 +95,27 @@
       </property>
     </widgetType>
 
-    <widgetType name="summary_social_media_type">
+    <widgetType name="summary_media_publishing_type">
       <documentation>
-        This widget displays the list of published social media document.
+        This widget displays the list of published media document.
       </documentation>
       <handler-class>
         org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
       </handler-class>
       <property name="template">
-        /widgets/summary_social_media_widget.xhtml
+        /widgets/summary_media_publishing_widget.xhtml
       </property>
     </widgetType>
 
-    <widgetType name="publish_social_media_type">
+    <widgetType name="publish_media_type">
       <documentation>
-        This widget provides an interface to upload and retrieve information about a Social Media provider.
+        This widget provides an interface to upload and retrieve information about a Media Publishing provider.
       </documentation>
       <handler-class>
         org.nuxeo.ecm.platform.forms.layout.facelets.plugins.TemplateWidgetTypeHandler
       </handler-class>
       <property name="template">
-        /widgets/publish_tab_social_media_widget.xhtml
+        /widgets/publish_tab_media_publishing_widget.xhtml
       </property>
     </widgetType>
 

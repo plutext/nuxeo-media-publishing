@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<component name="org.nuxeo.ecm.social.publishing.web.actions">
+<component name="org.nuxeo.ecm.media.publishing.web.actions">
 
     <require>org.nuxeo.ecm.platform.actions</require>
     <require>org.nuxeo.ecm.platform.forms.layouts.webapp.summary</require>
@@ -7,9 +7,9 @@
     
     <extension point="filters" target="org.nuxeo.ecm.platform.actions.ActionService">
 
-        <filter id="isSocialMedia">
+        <filter id="isPublishableMedia">
             <rule grant="true">
-                <facet>SocialMedia</facet>
+                <facet>PublishableMedia</facet>
             </rule>
         </filter>
 
@@ -25,27 +25,27 @@
             </properties>
         </action>
 
-        <!-- add social media widget to publish tab layout -->
-        <action id="social_media_widget_publish" type="widget" order="20">
+        <!-- add media publishing widget to publish tab layout -->
+        <action id="media_widget_publish" type="widget" order="20">
             <category>PUBLISH_PANEL_TOP</category>
             <properties>
-                <property name="widgetName">publish_social_media_widget</property>
+                <property name="widgetName">publish_media_widget</property>
             </properties>
-            <filter-id>isSocialMedia</filter-id>
+            <filter-id>isPublishableMedia</filter-id>
         </action>
 
-        <!-- add social media widget to summary layout -->
-        <action id="social_media_widget_summary" type="widget" order="400">
+        <!-- add media publishing widget to summary layout -->
+        <action id="media_widget_summary" type="widget" order="400">
             <category>SUMMARY_PANEL_LEFT</category>
             <properties>
-                <property name="widgetName">summary_social_media_widget</property>
+                <property name="widgetName">summary_media_publishing_widget</property>
             </properties>
-            <filter-id>isSocialMedia</filter-id>
+            <filter-id>isPublishableMedia</filter-id>
         </action>
 
         <!-- youtube options -->
         <action id="youtube_options" type="widget" order="10">
-            <category>SOCIAL_PUBLISHING_OPTIONS_CATEGORY</category>
+            <category>MEDIA_PUBLISHING_OPTIONS_CATEGORY</category>
             <properties>
                 <property name="widgetName">youtube_options_widget</property>
             </properties>
@@ -58,7 +58,7 @@
 
         <!-- wistia options -->
         <action id="wistia_options" type="widget" order="20">
-            <category>SOCIAL_PUBLISHING_OPTIONS_CATEGORY</category>
+            <category>MEDIA_PUBLISHING_OPTIONS_CATEGORY</category>
             <properties>
                 <property name="widgetName">wistia_options_widget</property>
             </properties>

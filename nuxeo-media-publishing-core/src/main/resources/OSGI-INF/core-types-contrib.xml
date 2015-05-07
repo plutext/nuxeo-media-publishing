@@ -1,20 +1,20 @@
-<component name="org.nuxeo.ecm.social.publishing.core.types">
+<component name="org.nuxeo.ecm.media.publishing.core.types">
 
   <require>org.nuxeo.ecm.core.CoreExtensions</require>
   <require>org.nuxeo.nuxeo.ecm.platform.video.doctype</require>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
-    <schema name="social_media" src="schemas/social_media.xsd" prefix="sm" />
+    <schema name="publishable_media" src="schemas/publishable_media.xsd" prefix="pm" />
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
 
-    <facet name="SocialMedia">
-      <schema name="social_media" />
+    <facet name="PublishableMedia">
+      <schema name="publishable_media" />
     </facet>
 
     <doctype name="Video" append="true">
-      <facet name="SocialMedia" />
+      <facet name="PublishableMedia" />
     </doctype>
 
   </extension>

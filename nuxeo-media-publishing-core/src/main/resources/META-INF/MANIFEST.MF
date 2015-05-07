@@ -9,4 +9,4 @@ Bundle-SymbolicName: nuxeo-media-publishing-core
 Nuxeo-Component: OSGI-INF/core-types-contrib.xml,
  OSGI-INF/doc-adapters-contrib.xml,
  OSGI-INF/workmanager-contrib.xml,
- OSGI-INF/social-publishing-service.xml
+ OSGI-INF/media-publishing-service.xml

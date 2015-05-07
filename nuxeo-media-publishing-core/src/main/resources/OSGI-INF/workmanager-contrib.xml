@@ -1,9 +1,9 @@
-<component name="org.nuxeo.ecm.social.publishing.workmanager">
+<component name="org.nuxeo.ecm.media.publishing.workmanager">
 
   <extension target="org.nuxeo.ecm.core.work.service" point="queues">
-    <queue id="socialMediaUpload">
+    <queue id="mediaPublishingUpload">
       <maxThreads>5</maxThreads>
-      <category>socialMediaUpload</category>
+      <category>mediaPublishingUpload</category>
     </queue>
 
   </extension>

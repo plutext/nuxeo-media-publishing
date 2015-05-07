@@ -6,7 +6,7 @@
   </h:outputLabel>
 
   <h:selectOneMenu value="#{value['project_id']}">
-    <f:selectItems value="#{wistiaPublishingActions.getProjects(socialPublishing.selectedAccount)}"
+    <f:selectItems value="#{wistiaPublishingActions.getProjects(mediaPublishing.selectedAccount)}"
                    var="project"
                    itemValue="#{project.hashedId}"
                    itemLabel="#{project.name}"/>
