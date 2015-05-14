@@ -17,13 +17,7 @@
 
 package org.nuxeo.ecm.media.publishing.wistia;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,13 +25,12 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.media.publishing.wistia.model.Media;
-import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
+import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry;
 import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
 import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
 import org.nuxeo.ecm.media.publishing.upload.MediaPublishingProgressListener;
 import org.nuxeo.ecm.media.publishing.wistia.model.Stats;
-import org.nuxeo.ecm.webengine.oauth2.WEOAuthConstants;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
@@ -62,12 +55,6 @@ public class WistiaService extends DefaultComponent implements MediaPublishingPr
 
     public static final String CONFIGURATION_EP = "configuration";
 
-    /** Global instance of the HTTP transport. */
-    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-
-    /** Global instance of the JSON factory. */
-    private static final JsonFactory JSON_FACTORY = new JacksonFactory();
-
     private String providerName;
 
     private String clientId;
@@ -76,7 +63,7 @@ public class WistiaService extends DefaultComponent implements MediaPublishingPr
 
     private String accountEmail;
 
-    private NuxeoOAuth2ServiceProvider oauth2Provider;
+    private OAuth2ServiceProvider oauth2Provider;
 
 
     @Override
@@ -94,20 +81,7 @@ public class WistiaService extends DefaultComponent implements MediaPublishingPr
         return Framework.getLocalService(OAuth2ServiceProviderRegistry.class);
     }
 
-    public String getAuthorizationURL(String serverURL) {
-        AuthorizationCodeFlow flow = oauth2Provider.getAuthorizationCodeFlow(HTTP_TRANSPORT, JSON_FACTORY);
-        if (serverURL.endsWith("/")) {
-            serverURL = serverURL.substring(0, serverURL.length() - 1);
-        }
-        String redirectUrl = serverURL + WEOAuthConstants.getDefaultCallbackURL(oauth2Provider.getServiceName());
-
-        AuthorizationCodeRequestUrl authorizationUrl = flow.newAuthorizationUrl();
-        authorizationUrl.setRedirectUri(redirectUrl);
-
-        return authorizationUrl.build();
-    }
-
-    protected NuxeoOAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
+    protected OAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
         if (oauth2Provider == null) {
             OAuth2ServiceProviderRegistry oauth2ProviderRegistry = getOAuth2ServiceProviderRegistry();
             if (oauth2ProviderRegistry != null) {
@@ -129,8 +103,6 @@ public class WistiaService extends DefaultComponent implements MediaPublishingPr
                             + " is already in the Database, XML contribution  won't overwrite it");
                 }
             }
-
-            log.warn("Please got to " + getAuthorizationURL("http://localhost:8080") + " to start the authorization flow");
         }
         return oauth2Provider;
     }
@@ -146,9 +118,8 @@ public class WistiaService extends DefaultComponent implements MediaPublishingPr
 
         // Use system wide OAuth2 provider
         if (getOAuth2ServiceProvider() != null) {
-            AuthorizationCodeFlow flow = getOAuth2ServiceProvider().getAuthorizationCodeFlow(HTTP_TRANSPORT, JSON_FACTORY);
             try {
-                credential = flow.loadCredential(account);
+                credential = getOAuth2ServiceProvider().loadCredential(account);
                 if (credential != null) {
                     // Refresh access token if needed (based on com.google.api.client.auth.oauth.Credential.intercept())
                     // TODO: rely on Google Oauth aware client instead

@@ -51,10 +51,5 @@ public interface MediaPublishingProvider {
      */
     Map<String, String> getStats(String mediaId, String account);
 
-    /**
-     * Returns the URL that should be used to start the authorization flow
-     */
-    String getAuthorizationURL(String serverURL);
-
     List getProjects(String account);
 }

@@ -17,16 +17,10 @@
 
 package org.nuxeo.ecm.media.publishing.youtube;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.youtube.YouTubeScopes;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
@@ -37,19 +31,22 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
+import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry;
 import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
 import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
 import org.nuxeo.ecm.media.publishing.upload.MediaPublishingProgressListener;
-import org.nuxeo.ecm.webengine.oauth2.WEOAuthConstants;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Youtube Media Publishing Provider Service
@@ -61,12 +58,6 @@ public class YouTubeService extends DefaultComponent implements MediaPublishingP
 
     public static final String CONFIGURATION_EP = "configuration";
 
-    /** Global instance of the HTTP transport. */
-    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-
-    /** Global instance of the JSON factory. */
-    private static final JsonFactory JSON_FACTORY = new JacksonFactory();
-
     private String providerName;
 
     private String clientId;
@@ -75,7 +66,7 @@ public class YouTubeService extends DefaultComponent implements MediaPublishingP
 
     private String accountEmail;
 
-    private NuxeoOAuth2ServiceProvider oauth2Provider;
+    private OAuth2ServiceProvider oauth2Provider;
 
     @Override
     public void registerContribution(Object contribution,
@@ -93,22 +84,7 @@ public class YouTubeService extends DefaultComponent implements MediaPublishingP
         return Framework.getLocalService(OAuth2ServiceProviderRegistry.class);
     }
 
-    public String getAuthorizationURL(String serverURL) {
-        AuthorizationCodeFlow flow = oauth2Provider.getAuthorizationCodeFlow(HTTP_TRANSPORT, JSON_FACTORY);
-        if (serverURL.endsWith("/")) {
-            serverURL = serverURL.substring(0, serverURL.length() - 1);
-        }
-        String redirectUrl = serverURL + WEOAuthConstants.getDefaultCallbackURL(oauth2Provider.getServiceName());
-
-        // redirect to the authorization flow
-        AuthorizationCodeRequestUrl authorizationUrl = flow.newAuthorizationUrl();
-        authorizationUrl.setRedirectUri(redirectUrl);
-
-        // request offline access and force consent screen
-        return authorizationUrl.build();
-    }
-
-    protected NuxeoOAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
+    protected OAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
         // Register the system wide OAuth2 provider
         if (oauth2Provider == null) {
             OAuth2ServiceProviderRegistry oauth2ProviderRegistry = getOAuth2ServiceProviderRegistry();
@@ -134,9 +110,6 @@ public class YouTubeService extends DefaultComponent implements MediaPublishingP
                         + " is already in the Database, XML contribution  won't overwrite it");
                 }
             }
-
-            log.warn("Please got to " + getAuthorizationURL("http://localhost:8080") + " to start the authorization flow");
-
         }
         return oauth2Provider;
     }
@@ -152,12 +125,7 @@ public class YouTubeService extends DefaultComponent implements MediaPublishingP
 
         // Use system wide OAuth2 provider
         if (getOAuth2ServiceProvider() != null) {
-            AuthorizationCodeFlow flow = getOAuth2ServiceProvider().getAuthorizationCodeFlow(HTTP_TRANSPORT, JSON_FACTORY);
-            try {
-                credential = flow.loadCredential(account);
-            } catch (IOException e) {
-                throw new ClientException(e.getMessage());
-            }
+            credential = getOAuth2ServiceProvider().loadCredential(account);
         }
 
         if (credential != null && credential.getAccessToken() != null) {
