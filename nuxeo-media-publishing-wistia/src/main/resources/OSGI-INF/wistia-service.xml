@@ -10,18 +10,4 @@
     <provide interface="org.nuxeo.ecm.media.publishing.wistia.WistiaService" />
   </service>
 
-  <extension-point name="configuration">
-    <documentation>
-      <code>
-        <configuration>
-          <provider>Wistia</provider>
-          <accountEmail>EMAIL</accountEmail>
-          <clientId>CLIENT_ID</clientId>
-          <clientSecret>CLIENT_SECRET</clientSecret>
-        </configuration>
-      </code>
-    </documentation>
-    <object class="org.nuxeo.ecm.media.publishing.wistia.WistiaConfigurationDescriptor"/>
-  </extension-point>
-
 </component>

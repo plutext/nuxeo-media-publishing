@@ -49,67 +49,21 @@ import java.util.Map.Entry;
  *
  * @since 7.3
  */
-public class WistiaService extends DefaultComponent implements MediaPublishingProvider {
+public class WistiaService implements MediaPublishingProvider {
 
     private static final Log log = LogFactory.getLog(WistiaService.class);
 
-    public static final String CONFIGURATION_EP = "configuration";
-
-    private String providerName;
-
-    private String clientId;
-
-    private String clientSecret;
-
-    private String accountEmail;
+    public static final String PROVIDER = "Wistia";
 
     private OAuth2ServiceProvider oauth2Provider;
 
-
-    @Override
-    public void registerContribution(Object contribution, String extensionPoint, ComponentInstance contributor) {
-        if (CONFIGURATION_EP.equals(extensionPoint)) {
-            WistiaConfigurationDescriptor config = (WistiaConfigurationDescriptor) contribution;
-            providerName = config.getProvider();
-            clientId = config.getClientId();
-            clientSecret = config.getClientSecret();
-            accountEmail = config.getAccountEmail();
-        }
-    }
-
-    protected OAuth2ServiceProviderRegistry getOAuth2ServiceProviderRegistry() {
-        return Framework.getLocalService(OAuth2ServiceProviderRegistry.class);
-    }
-
     protected OAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
         if (oauth2Provider == null) {
-            OAuth2ServiceProviderRegistry oauth2ProviderRegistry = getOAuth2ServiceProviderRegistry();
-            if (oauth2ProviderRegistry != null) {
-                oauth2Provider = oauth2ProviderRegistry.getProvider(providerName);
-                if (oauth2Provider == null) {
-                    try {
-                        oauth2Provider = oauth2ProviderRegistry.addProvider(
-                                providerName,
-                                "https://api.wistia.com/oauth/token",
-                                "https://app.wistia.com/oauth/authorize",
-                                clientId, clientSecret,
-                                Arrays.asList());
-                    } catch (Exception e) {
-                        throw new ClientException(e.getMessage());
-                    }
-                } else {
-                    log.warn("Provider "
-                            + providerName
-                            + " is already in the Database, XML contribution  won't overwrite it");
-                }
-            }
+            OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(
+                OAuth2ServiceProviderRegistry.class);
+            oauth2Provider = oAuth2ProviderRegistry.getProvider(PROVIDER);
         }
         return oauth2Provider;
-    }
-
-    @Override
-    public void applicationStarted(ComponentContext context) {
-        getOAuth2ServiceProvider();
     }
 
     public WistiaClient getWistiaClient(String account) throws ClientException {
@@ -143,10 +97,6 @@ public class WistiaService extends DefaultComponent implements MediaPublishingPr
 
         wistiaClient = new WistiaClient(credential.getAccessToken());
         return wistiaClient;
-    }
-
-    public WistiaClient getWistiaClient(CoreSession session) throws ClientException {
-        return getWistiaClient(session.getPrincipal().getName());
     }
 
     @Override
@@ -196,7 +146,6 @@ public class WistiaService extends DefaultComponent implements MediaPublishingPr
         return map;
     }
 
-    @Override
     public List getProjects(String account) {
         return getWistiaClient(account).getProjects();
     }

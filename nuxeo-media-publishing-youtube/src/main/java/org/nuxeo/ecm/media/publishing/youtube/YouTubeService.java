@@ -53,70 +53,19 @@ import java.util.Map;
  *
  * @since 7.3
  */
-public class YouTubeService extends DefaultComponent implements MediaPublishingProvider {
+public class YouTubeService implements MediaPublishingProvider {
     private static final Log log = LogFactory.getLog(YouTubeService.class);
 
-    public static final String CONFIGURATION_EP = "configuration";
-
-    private String providerName;
-
-    private String clientId;
-
-    private String clientSecret;
-
-    private String accountEmail;
+    public static final String PROVIDER = "YouTube";
 
     private OAuth2ServiceProvider oauth2Provider;
 
-    @Override
-    public void registerContribution(Object contribution,
-        String extensionPoint, ComponentInstance contributor) {
-        if (CONFIGURATION_EP.equals(extensionPoint)) {
-            YouTubeConfigurationDescriptor config = (YouTubeConfigurationDescriptor) contribution;
-            providerName = config.getProvider();
-            clientId = config.getClientId();
-            clientSecret = config.getClientSecret();
-            accountEmail = config.getAccountEmail();
-        }
-    }
-
-    protected OAuth2ServiceProviderRegistry getOAuth2ServiceProviderRegistry() {
-        return Framework.getLocalService(OAuth2ServiceProviderRegistry.class);
-    }
-
     protected OAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
-        // Register the system wide OAuth2 provider
         if (oauth2Provider == null) {
-            OAuth2ServiceProviderRegistry oauth2ProviderRegistry = getOAuth2ServiceProviderRegistry();
-
-            if (oauth2ProviderRegistry != null) {
-
-                oauth2Provider = oauth2ProviderRegistry.getProvider(providerName);
-
-                if (oauth2Provider == null) {
-                    try {
-                        oauth2Provider = oauth2ProviderRegistry.addProvider(
-                            providerName,
-                            GoogleOAuthConstants.TOKEN_SERVER_URL,
-                            GoogleOAuthConstants.AUTHORIZATION_SERVER_URL + "?access_type=offline&approval_prompt=force",
-                            clientId, clientSecret,
-                            Arrays.asList(YouTubeScopes.YOUTUBE));
-                    } catch (Exception e) {
-                        throw new ClientException(e.getMessage());
-                    }
-                } else {
-                    log.warn("Provider "
-                        + providerName
-                        + " is already in the Database, XML contribution  won't overwrite it");
-                }
-            }
+            OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(OAuth2ServiceProviderRegistry.class);
+            oauth2Provider = oAuth2ProviderRegistry.getProvider(PROVIDER);
         }
         return oauth2Provider;
-    }
-
-    @Override
-    public void applicationStarted(ComponentContext context) {
-        getOAuth2ServiceProvider();
     }
 
     public YouTubeClient getYouTubeClient(String account) throws ClientException {
@@ -135,10 +84,6 @@ public class YouTubeService extends DefaultComponent implements MediaPublishingP
         }
 
         return youTubeClient;
-    }
-
-    public YouTubeClient getYouTubeClient(CoreSession session) throws ClientException {
-        return getYouTubeClient(session.getPrincipal().getName());
     }
 
     @Override
@@ -225,13 +170,7 @@ public class YouTubeService extends DefaultComponent implements MediaPublishingP
             map.put("Favorites", stats.getFavoriteCount().toString());
             return map;
         } catch (IOException e) {
-//            throw new ClientException(e.getMessage());
             return null;
         }
-    }
-
-    @Override
-    public List getProjects(String account) {
-        return null;
     }
 }

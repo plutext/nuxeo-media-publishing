@@ -15,13 +15,15 @@
  *      Andre Justo
  */
 
-package org.nuxeo.ecm.media.publishing;
+package org.nuxeo.ecm.media.publishing.wistia;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
+import org.nuxeo.ecm.media.publishing.MediaPublishingService;
 import org.nuxeo.runtime.api.Framework;
 
 import java.io.Serializable;
@@ -55,7 +57,7 @@ public class WistiaPublishingActions implements Serializable{
         if (projects == null) {
             projects = new ArrayList<>();
             MediaPublishingProvider service = getMediaPublishingService().getProvider("Wistia");
-            projects = service.getProjects(account);
+            projects = ((WistiaService)service).getProjects(account);
         }
         return projects;
     }

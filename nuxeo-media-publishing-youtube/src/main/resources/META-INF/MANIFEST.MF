@@ -8,4 +8,5 @@ Bundle-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: nuxeo-media-publishing-youtube
 Nuxeo-Component: OSGI-INF/youtube-service.xml,
- OSGI-INF/media-publishing-provider-contrib.xml
+ OSGI-INF/media-publishing-provider-contrib.xml,
+ OSGI-INF/youtube-config.xml
