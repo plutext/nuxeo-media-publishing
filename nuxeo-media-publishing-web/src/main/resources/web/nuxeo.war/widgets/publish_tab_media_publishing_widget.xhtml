@@ -28,7 +28,7 @@
         </c:if>
 
         <c:if test="#{empty uploadStatus}">
-          <c:set var="providerAccounts" value="#{oauthUserTokens.getProviderAccounts(provider)}"/>
+          <c:set var="providerAccounts" value="#{oauthUserTokens.getProviderAccounts(provider, true)}"/>
 
           <c:if test="#{not empty providerAccounts}">
             <a href="##{provider}_media_publish_popup" class="button smallButton media_publishing_openPopup">
