@@ -31,6 +31,8 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry;
 import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
@@ -44,6 +46,7 @@ import org.nuxeo.runtime.model.DefaultComponent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,14 +61,10 @@ public class YouTubeService implements MediaPublishingProvider {
 
     public static final String PROVIDER = "YouTube";
 
-    private OAuth2ServiceProvider oauth2Provider;
-
     protected OAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
-        if (oauth2Provider == null) {
-            OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(OAuth2ServiceProviderRegistry.class);
-            oauth2Provider = oAuth2ProviderRegistry.getProvider(PROVIDER);
-        }
-        return oauth2Provider;
+        OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(
+            OAuth2ServiceProviderRegistry.class);
+        return oAuth2ProviderRegistry.getProvider(PROVIDER);
     }
 
     public YouTubeClient getYouTubeClient(String account) throws ClientException {
@@ -80,7 +79,7 @@ public class YouTubeService implements MediaPublishingProvider {
         if (credential != null && credential.getAccessToken() != null) {
             youTubeClient = new YouTubeClient(credential);
         } else {
-            throw new ClientException("Failed to get YouTube credentials");
+            return null;
         }
 
         return youTubeClient;
@@ -156,8 +155,13 @@ public class YouTubeService implements MediaPublishingProvider {
 
     @Override
     public Map<String, String> getStats(String mediaId, String account) {
+        YouTubeClient client = getYouTubeClient(account);
+        if (client == null) {
+            return Collections.emptyMap();
+        }
+
         try {
-            VideoStatistics stats = getYouTubeClient(account).getStatistics(mediaId);
+            VideoStatistics stats = client.getStatistics(mediaId);
             if (stats == null) {
                 return null;
             }
@@ -172,5 +176,25 @@ public class YouTubeService implements MediaPublishingProvider {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    @Override
+    public boolean isAvailable(PublishableMedia media) {
+        if (media == null) {
+            return isOAuthProviderConfigured();
+        } else {
+            return isOAuthProviderConfigured() && isOAuthTokenAvailable(media);
+        }
+    }
+
+    private boolean isOAuthProviderConfigured() {
+        NuxeoOAuth2ServiceProvider serviceProvider = (NuxeoOAuth2ServiceProvider) getOAuth2ServiceProvider();
+        return serviceProvider != null && serviceProvider.isEnabled() && serviceProvider.getClientSecret() != null &&
+            serviceProvider.getClientId() != null;
+    }
+
+    private boolean isOAuthTokenAvailable(PublishableMedia media) {
+        NuxeoOAuth2ServiceProvider serviceProvider = (NuxeoOAuth2ServiceProvider) getOAuth2ServiceProvider();
+        return serviceProvider != null && serviceProvider.loadCredential(media.getAccount(PROVIDER)) != null;
     }
 }

@@ -25,6 +25,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.media.publishing.wistia.model.Media;
+import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry;
 import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
@@ -39,6 +40,7 @@ import org.nuxeo.runtime.model.DefaultComponent;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,19 +57,14 @@ public class WistiaService implements MediaPublishingProvider {
 
     public static final String PROVIDER = "Wistia";
 
-    private OAuth2ServiceProvider oauth2Provider;
-
     protected OAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
-        if (oauth2Provider == null) {
-            OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(
-                OAuth2ServiceProviderRegistry.class);
-            oauth2Provider = oAuth2ProviderRegistry.getProvider(PROVIDER);
-        }
-        return oauth2Provider;
+        OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(
+            OAuth2ServiceProviderRegistry.class);
+        return oAuth2ProviderRegistry.getProvider(PROVIDER);
     }
 
     public WistiaClient getWistiaClient(String account) throws ClientException {
-        WistiaClient wistiaClient;
+        WistiaClient wistiaClient = null;
         Credential credential = null;
 
         // Use system wide OAuth2 provider
@@ -86,16 +83,15 @@ public class WistiaService implements MediaPublishingProvider {
                             throw new ClientException("Failed to refresh access token");
                         }
                     }
+                    wistiaClient = new WistiaClient(credential.getAccessToken());
                 }
                 else {
-                    throw new ClientException("Failed to get Wistia credentials");
+                    return null;
                 }
             } catch (IOException e) {
                 throw new ClientException(e.getMessage());
             }
         }
-
-        wistiaClient = new WistiaClient(credential.getAccessToken());
         return wistiaClient;
     }
 
@@ -122,17 +118,24 @@ public class WistiaService implements MediaPublishingProvider {
 
     @Override
     public String getPublishedUrl(String mediaId, String account) {
-        return getWistiaClient(account).getAccount().getUrl() + "/medias/" + mediaId;
+        WistiaClient client = getWistiaClient(account);
+        return client == null ? null : client.getAccount().getUrl() + "/medias/" + mediaId;
     }
 
     @Override
     public String getEmbedCode(String mediaId, String account) {
-        return getWistiaClient(account).getEmbedCode(getPublishedUrl(mediaId, account));
+        WistiaClient client = getWistiaClient(account);
+        return client == null ? null : client.getEmbedCode(getPublishedUrl(mediaId, account));
     }
 
     @Override
     public Map<String, String> getStats(String mediaId, String account) {
-        Stats stats = getWistiaClient(account).getMediaStats(mediaId);
+        WistiaClient client = getWistiaClient(account);
+        if (client == null) {
+            return null;
+        }
+
+        Stats stats = client.getMediaStats(mediaId);
         if (stats == null) {
             return null;
         }
@@ -146,7 +149,28 @@ public class WistiaService implements MediaPublishingProvider {
         return map;
     }
 
+    @Override
+    public boolean isAvailable(PublishableMedia media) {
+        if (media == null) {
+            return isOAuthProviderConfigured();
+        } else {
+            return isOAuthProviderConfigured() && isOAuthTokenAvailable(media);
+        }
+    }
+
+    private boolean isOAuthProviderConfigured() {
+        NuxeoOAuth2ServiceProvider serviceProvider = (NuxeoOAuth2ServiceProvider) getOAuth2ServiceProvider();
+        return serviceProvider != null && serviceProvider.isEnabled() && serviceProvider.getClientSecret() != null &&
+            serviceProvider.getClientId() != null;
+    }
+
+    private boolean isOAuthTokenAvailable(PublishableMedia media) {
+        NuxeoOAuth2ServiceProvider serviceProvider = (NuxeoOAuth2ServiceProvider) getOAuth2ServiceProvider();
+        return serviceProvider != null && serviceProvider.loadCredential(media.getAccount(PROVIDER)) != null;
+    }
+
     public List getProjects(String account) {
-        return getWistiaClient(account).getProjects();
+        WistiaClient client = getWistiaClient(account);
+        return client == null ? Collections.emptyList() : client.getProjects();
     }
 }

@@ -31,6 +31,8 @@ import org.nuxeo.ecm.core.work.api.Work;
 import org.nuxeo.ecm.core.work.api.WorkManager;
 import org.nuxeo.ecm.platform.actions.Action;
 import org.nuxeo.ecm.platform.actions.ActionContext;
+import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
+import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
@@ -254,5 +256,14 @@ public class MediaPublishingActions implements Serializable {
         public int getQueueSize() {
             return queueSize;
         }
+    }
+
+    public boolean canPublish(String provider) {
+        return getMediaPublishingService().getProvider(provider).isAvailable(null);
+    }
+
+    public boolean isProviderAvailable(DocumentModel doc, String provider) {
+        PublishableMedia media = doc.getAdapter(PublishableMedia.class);
+        return getMediaPublishingService().getProvider(provider).isAvailable(media);
     }
 }

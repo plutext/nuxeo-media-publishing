@@ -3,7 +3,8 @@
      xmlns:c="http://java.sun.com/jstl/core"
      xmlns:nxl="http://nuxeo.org/nxforms/layout"
      xmlns:a4j="http://richfaces.org/a4j"
-     xmlns:nxu="http://nuxeo.org/nxweb/util">
+     xmlns:nxu="http://nuxeo.org/nxweb/util"
+     xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 
   <h:form>
     <a4j:region>
@@ -23,11 +24,17 @@
       <div style="margin-bottom: 10px">
         <h:outputText value="#{provider}" styleClass="labelColumn" style="display: inline-block; width: 125px"/>
 
+        <h:panelGroup p:title="#{messages['error.mediaPublishing.providerDisabled']}"
+                      rendered="#{not mediaPublishing.canPublish(provider)}"
+                      styleClass="tipsyShow tipsyGravityS">
+          <h:graphicImage value="/icons/warning.gif" style="margin-left: 5px;"/>
+        </h:panelGroup>
+
         <c:if test="#{not empty uploadStatus}">
           <h:outputText value="#{mediaPublishing.getStatusMessageFor(uploadStatus)}"/>
         </c:if>
 
-        <c:if test="#{empty uploadStatus}">
+        <c:if test="#{empty uploadStatus and mediaPublishing.canPublish(provider)}">
           <c:set var="providerAccounts" value="#{oauthUserTokens.getProviderAccounts(provider, true)}"/>
 
           <c:if test="#{not empty providerAccounts}">
@@ -80,11 +87,11 @@
             </div>
           </c:if>
 
-          <c:if test="#{empty providerAccounts}">
-            <p style="display: inline-block;">
-              #{messages['error.mediaPublishing.emptyAccounts']}
-            </p>
-          </c:if>
+          <h:panelGroup p:title=" #{messages['error.mediaPublishing.emptyAccounts']}"
+                        rendered="#{empty providerAccounts}"
+                        styleClass="tipsyShow tipsyGravityS">
+            <h:graphicImage value="/icons/warning.gif" style="margin-left: 5px;"/>
+          </h:panelGroup>
         </c:if>
       </div>
     </c:forEach>

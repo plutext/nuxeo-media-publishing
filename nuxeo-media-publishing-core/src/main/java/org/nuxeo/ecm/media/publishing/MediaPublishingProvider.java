@@ -50,4 +50,6 @@ public interface MediaPublishingProvider {
      * Retrieve a map of statistics (depends on the provider)
      */
     Map<String, String> getStats(String mediaId, String account);
+
+    boolean isAvailable(PublishableMedia media);
 }

@@ -20,6 +20,7 @@ package org.nuxeo.ecm.media.publishing;
 import org.nuxeo.runtime.model.ContributionFragmentRegistry;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +64,13 @@ public class MediaPublishingProviderRegistry extends ContributionFragmentRegistr
     }
 
     public Set<String> getServices() {
-        return providers.keySet();
+        Set<String> services = new HashSet<>();
+        for (String provider : providers.keySet()) {
+            if (lookup(provider).isEnabled()) {
+                services.add(provider);
+            }
+        }
+        return services;
     }
 
     public MediaPublishingProviderDescriptor lookup(String provider) {
