@@ -17,12 +17,25 @@
 
 package org.nuxeo.ecm.media.publishing.upload;
 
-import org.nuxeo.ecm.core.api.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
+import org.nuxeo.ecm.core.api.VersioningOption;
+import org.nuxeo.ecm.core.api.event.DocumentEventCategories;
+import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
+import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventProducer;
+import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.versioning.VersioningService;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.media.publishing.MediaPublishingConstants;
 import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
 import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
+import org.nuxeo.runtime.api.Framework;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +55,8 @@ public class MediaPublishingUploadWork extends AbstractWork {
     private CoreSession loginSession;
     private String account;
     private Map<String, String> options;
+
+    private static final Log log = LogFactory.getLog(MediaPublishingUploadWork.class);
 
     public MediaPublishingUploadWork(String serviceId, MediaPublishingProvider service, String repositoryName,
         String docId, CoreSession loginSession, String account, Map<String, String> options) {
@@ -127,6 +142,18 @@ public class MediaPublishingUploadWork extends AbstractWork {
                     doc.putContextData(VersioningService.VERSIONING_OPTION, VersioningOption.NONE);
                     doc.putContextData(VersioningService.DISABLE_AUTO_CHECKOUT, Boolean.TRUE);
 
+                    // Track media publication in document history
+                    DocumentEventContext ctx = new DocumentEventContext(loginSession, loginSession.getPrincipal(), doc);
+                    ctx.setComment("Published to " + serviceId);
+                    ctx.setCategory(DocumentEventCategories.EVENT_DOCUMENT_CATEGORY);
+
+                    EventProducer evtProducer = Framework.getService(EventProducer.class);
+                    Event event = ctx.newEvent(DocumentEventTypes.DOCUMENT_PUBLISHED);
+                    try {
+                        evtProducer.fireEvent(event);
+                    } catch (ClientException e) {
+                        log.error("Error while sending event", e);
+                    }
                     doc.getCoreSession().saveDocument(doc);
                     session.save();
                 } catch (IOException e) {
