@@ -61,26 +61,6 @@
       </labels>
     </widget>
 
-    <widget name="youtube_options_widget" type="template">
-      <handlingLabels>true</handlingLabels>
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <properties widgetMode="any">
-        <property name="template">/widgets/youtube_options_widget.xhtml</property>
-      </properties>
-    </widget>
-
-    <widget name="wistia_options_widget" type="template">
-      <handlingLabels>true</handlingLabels>
-      <labels>
-        <label mode="any"></label>
-      </labels>
-      <properties widgetMode="any">
-        <property name="template">/widgets/wistia_options_widget.xhtml</property>
-      </properties>
-    </widget>
-
   </extension>
 
   <!-- widget types -->

@@ -43,32 +43,6 @@
             <filter-id>isPublishableMedia</filter-id>
         </action>
 
-        <!-- youtube options -->
-        <action id="youtube_options" type="widget" order="10">
-            <category>MEDIA_PUBLISHING_OPTIONS_CATEGORY</category>
-            <properties>
-                <property name="widgetName">youtube_options_widget</property>
-            </properties>
-            <filter id="isYoutubeOption">
-                <rule grant="true">
-                    <condition>#{provider == "YouTube"}</condition>
-                </rule>
-            </filter>
-        </action>
-
-        <!-- wistia options -->
-        <action id="wistia_options" type="widget" order="20">
-            <category>MEDIA_PUBLISHING_OPTIONS_CATEGORY</category>
-            <properties>
-                <property name="widgetName">wistia_options_widget</property>
-            </properties>
-            <filter id="isWistiaOption">
-                <rule grant="true">
-                    <condition>#{provider == "Wistia"}</condition>
-                </rule>
-            </filter>
-        </action>
-
     </extension>
 
 </component>
