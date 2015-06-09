@@ -7,6 +7,7 @@
 
   <c:forEach var="provider" items="#{mediaPublishing.getAvailableServices(value)}" varStatus="status">
 
+    <c:set var="isMediaAvailable" value="#{mediaPublishing.isMediaAvailable(value, provider)}"/>
     <c:set var="isMediaPublished" value="#{mediaPublishing.isPublished(value, provider)}"/>
     <c:if test="#{isMediaPublished}">
       <c:set var="mediaUrl" value="#{mediaPublishing.getPublishedURL(value, provider)}"/>
@@ -19,7 +20,7 @@
         #{provider}
 
         <h:panelGroup p:title="#{provider} #{messages['error.mediaPublishing.noDetails']}"
-                      rendered="#{isMediaPublished and not mediaPublishing.isProviderAvailable(value, provider)}"
+                      rendered="#{isMediaPublished and not isMediaAvailable}"
                       styleClass="tipsyShow tipsyGravityS"
                       style="display: inline;">
           <h:graphicImage value="/icons/warning.gif" style="vertical-align: sub" />
@@ -33,7 +34,7 @@
 
               <h:panelGroup styleClass="actionsColumn"
                             style="float:right"
-                            rendered="#{mediaPublishing.isProviderAvailable(value, provider)}">
+                            rendered="#{isMediaAvailable}">
                   <h:outputLink value="#"
                                 styleClass="button smallButton"
                                 rendered="#{not empty mediaUrl}"
@@ -64,7 +65,7 @@
           </c:choose>
         </span>
     </div>
-    <c:if test="#{isMediaPublished and mediaPublishing.isProviderAvailable(value, provider)}">
+    <c:if test="#{isMediaPublished and isMediaAvailable}">
       <div>
         <h:inputText class="#{provider}_externalUrl"
                      value="#{mediaUrl}"

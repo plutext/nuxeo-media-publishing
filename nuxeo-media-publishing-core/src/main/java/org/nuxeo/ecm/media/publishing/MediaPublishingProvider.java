@@ -51,5 +51,13 @@ public interface MediaPublishingProvider {
      */
     Map<String, String> getStats(String mediaId, String account);
 
-    boolean isAvailable(PublishableMedia media);
+    /**
+     * Checks if the provider is available
+     */
+    boolean isAvailable();
+
+    /**
+     * Checks it the given {@link PublishableMedia} is acessible
+     */
+    boolean isMediaAvailable(PublishableMedia media);
 }

@@ -18,10 +18,8 @@
 package org.nuxeo.ecm.media.publishing.youtube;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
-import com.google.api.services.youtube.YouTubeScopes;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatistics;
@@ -30,18 +28,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
-import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
-import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProvider;
-import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry;
-import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
+import org.nuxeo.ecm.media.publishing.OAuth2MediaPublishingProvider;
 import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
 import org.nuxeo.ecm.media.publishing.upload.MediaPublishingProgressListener;
-import org.nuxeo.runtime.api.Framework;
-import org.nuxeo.runtime.model.ComponentContext;
-import org.nuxeo.runtime.model.ComponentInstance;
-import org.nuxeo.runtime.model.DefaultComponent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,33 +45,18 @@ import java.util.Map;
  *
  * @since 7.3
  */
-public class YouTubeService implements MediaPublishingProvider {
+public class YouTubeService extends OAuth2MediaPublishingProvider {
     private static final Log log = LogFactory.getLog(YouTubeService.class);
 
     public static final String PROVIDER = "YouTube";
 
-    protected OAuth2ServiceProvider getOAuth2ServiceProvider() throws ClientException {
-        OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(
-            OAuth2ServiceProviderRegistry.class);
-        return oAuth2ProviderRegistry.getProvider(PROVIDER);
+    public YouTubeService() {
+        super(PROVIDER);
     }
 
     public YouTubeClient getYouTubeClient(String account) throws ClientException {
-        YouTubeClient youTubeClient;
-        Credential credential = null;
-
-        // Use system wide OAuth2 provider
-        if (getOAuth2ServiceProvider() != null) {
-            credential = getOAuth2ServiceProvider().loadCredential(account);
-        }
-
-        if (credential != null && credential.getAccessToken() != null) {
-            youTubeClient = new YouTubeClient(credential);
-        } else {
-            return null;
-        }
-
-        return youTubeClient;
+        Credential credential = getCredential(account);
+        return (credential != null && credential.getAccessToken() != null) ? new YouTubeClient(credential) : null;
     }
 
     @Override
@@ -176,25 +150,5 @@ public class YouTubeService implements MediaPublishingProvider {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    @Override
-    public boolean isAvailable(PublishableMedia media) {
-        if (media == null) {
-            return isOAuthProviderConfigured();
-        } else {
-            return isOAuthProviderConfigured() && isOAuthTokenAvailable(media);
-        }
-    }
-
-    private boolean isOAuthProviderConfigured() {
-        NuxeoOAuth2ServiceProvider serviceProvider = (NuxeoOAuth2ServiceProvider) getOAuth2ServiceProvider();
-        return serviceProvider != null && serviceProvider.isEnabled() && serviceProvider.getClientSecret() != null &&
-            serviceProvider.getClientId() != null;
-    }
-
-    private boolean isOAuthTokenAvailable(PublishableMedia media) {
-        NuxeoOAuth2ServiceProvider serviceProvider = (NuxeoOAuth2ServiceProvider) getOAuth2ServiceProvider();
-        return serviceProvider != null && serviceProvider.loadCredential(media.getAccount(PROVIDER)) != null;
     }
 }

@@ -24,10 +24,10 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.nuxeo.ecm.media.publishing.MediaPublishingProvider;
 import org.nuxeo.ecm.media.publishing.MediaPublishingService;
+import org.nuxeo.ecm.media.publishing.wistia.model.Project;
 import org.nuxeo.runtime.api.Framework;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,24 +41,22 @@ public class WistiaPublishingActions implements Serializable{
 
     private static final Log log = LogFactory.getLog(WistiaPublishingActions.class);
 
-    List<String> projects;
+    List<Project> projects;
 
     /**
      * Helper to retrieve a list of projects for a given Wistia account
-     * @param account
-     * @return
      */
-    public List<String> getProjects(String account) {
+    public List<Project> getProjects(String account) {
 
         if (account == null || account.length() == 0) {
             return null;
         }
 
         if (projects == null) {
-            projects = new ArrayList<>();
             MediaPublishingProvider service = getMediaPublishingService().getProvider("Wistia");
-            projects = ((WistiaService)service).getProjects(account);
+            projects = ((WistiaService) service).getProjects(account);
         }
+
         return projects;
     }
 

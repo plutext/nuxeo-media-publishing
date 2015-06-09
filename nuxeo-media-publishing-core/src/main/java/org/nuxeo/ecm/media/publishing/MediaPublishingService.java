@@ -38,5 +38,8 @@ public interface MediaPublishingService {
      */
     String publish(DocumentModel doc, String provider, String account, Map<String, String> options);
 
+    /**
+     * Return the provider with the given name.
+     */
     MediaPublishingProvider getProvider(String provider);
 }

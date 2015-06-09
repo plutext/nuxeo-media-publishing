@@ -54,8 +54,6 @@ public class YouTubeClient {
 
     YouTube youtube;
 
-    AuthorizationCodeFlow flow;
-
     Credential credential;
 
     public YouTubeClient(Credential credential) {
