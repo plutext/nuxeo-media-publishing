@@ -125,11 +125,11 @@ public class WistiaService extends OAuth2MediaPublishingProvider {
         }
 
         Map<String, String> map = new HashMap<>();
-        map.put("Visitors", Integer.toString(stats.getVisitors()));
-        map.put("Plays", Integer.toString(stats.getPlays()));
-        map.put("Average % Watched", Integer.toString(stats.getAveragePercentWatched()));
-        map.put("Page Loads", Integer.toString(stats.getPageLoads()));
-        map.put("% of visitors clicking play", Integer.toString(stats.getPercentOfVisitorsClickingPlay()));
+        map.put("label.mediaPublishing.stats.visitors", Integer.toString(stats.getVisitors()));
+        map.put("label.mediaPublishing.stats.plays", Integer.toString(stats.getPlays()));
+        map.put("label.mediaPublishing.stats.averagePercentWatched", Integer.toString(stats.getAveragePercentWatched()));
+        map.put("label.mediaPublishing.stats.pageLoads", Integer.toString(stats.getPageLoads()));
+        map.put("label.mediaPublishing.stats.percentOfVisitorsClickingPlay", Integer.toString(stats.getPercentOfVisitorsClickingPlay()));
         return map;
     }
 

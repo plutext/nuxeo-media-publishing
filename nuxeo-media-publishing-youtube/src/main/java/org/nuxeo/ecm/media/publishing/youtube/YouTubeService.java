@@ -141,11 +141,11 @@ public class YouTubeService extends OAuth2MediaPublishingProvider {
             }
 
             Map<String, String> map = new HashMap<>();
-            map.put("Views", stats.getViewCount().toString());
-            map.put("Comments", stats.getCommentCount().toString());
-            map.put("Likes", stats.getLikeCount().toString());
-            map.put("Dislikes", stats.getDislikeCount().toString());
-            map.put("Favorites", stats.getFavoriteCount().toString());
+            map.put("label.mediaPublishing.stats.views", stats.getViewCount().toString());
+            map.put("label.mediaPublishing.stats.comments", stats.getCommentCount().toString());
+            map.put("label.mediaPublishing.stats.likes", stats.getLikeCount().toString());
+            map.put("label.mediaPublishing.stats.dislikes", stats.getDislikeCount().toString());
+            map.put("label.mediaPublishing.stats.favorites", stats.getFavoriteCount().toString());
             return map;
         } catch (IOException e) {
             return null;

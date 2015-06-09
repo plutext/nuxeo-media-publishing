@@ -85,7 +85,7 @@
               <tr>
                 <c:forEach items="#{mediaStats}" var="entry">
                   <td>
-                    <span style="display: block"><b>#{entry.key}</b></span>
+                    <span style="display: block"><b>#{messages[entry.key]}</b></span>
                     <span>#{entry.value}</span>
                   </td>
                 </c:forEach>
