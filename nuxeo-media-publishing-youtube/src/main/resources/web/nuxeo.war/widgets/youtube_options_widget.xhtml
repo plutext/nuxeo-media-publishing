@@ -3,18 +3,18 @@
      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
   <h:outputLabel style="margin: 5px 0; display: block">
-    Privacy status:
+    #{messages['label.mediaPublishing.youtube.privacy']}:
   </h:outputLabel>
   <h:selectOneMenu value="#{value['privacyStatus']}">
-    <f:selectItem itemValue="unlisted" itemLabel="Unlisted"/>
-    <f:selectItem itemValue="private" itemLabel="Private"/>
-    <f:selectItem itemValue="public" itemLabel="Public"/>
+    <f:selectItem itemValue="unlisted" itemLabel="#{messages['label.mediaPublishing.youtube.privacy.unlisted']}"/>
+    <f:selectItem itemValue="private" itemLabel="#{messages['label.mediaPublishing.youtube.privacy.private']}"/>
+    <f:selectItem itemValue="public" itemLabel="#{messages['label.mediaPublishing.youtube.privacy.public']}"/>
   </h:selectOneMenu>
 
   <h:outputLabel style="margin: 5px 0; display: block">
-    Tags:
+    #{messages['label.mediaPublishing.youtube.tags']}:
   </h:outputLabel>
-  <h:inputText value="#{value['tags']}" a:placeholder="Tags separated with a comma">
+  <h:inputText value="#{value['tags']}" a:placeholder="#{messages['label.mediaPublishing.youtube.tags.placeholder']}">
 
   </h:inputText>
 </div>

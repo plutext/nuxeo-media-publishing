@@ -47,16 +47,16 @@
               <div id="#{provider}_media_publish_popup">
                 <h:form enctype="multipart/form-data" ajaxSubmit="true">
                   <h3>
-                    <h:outputText value="Upload to #{provider}"/>
+                    <h:outputText value="#{messages['label.widget.mediaPublishing.upload']} #{provider}"/>
                   </h3>
 
                   <h:outputLabel style="margin: 5px 0; display: block">
-                    #{provider} account:
+                    #{provider} #{messages['label.widget.mediaPublishing.account']}:
                   </h:outputLabel>
 
                   <h:selectOneMenu value="#{mediaPublishing.selectedAccount}" required="true"
-                                   requiredMessage="Please select an account">
-                    <f:selectItem itemLabel="Select a value..." itemValue="#{null}"/>
+                                   requiredMessage="#{messages['label.mediaPublishing.error.accountPicker']}">
+                    <f:selectItem itemLabel="#{messages['label.mediaPublishing.accountPicker']}" itemValue="#{null}"/>
                     <f:selectItems var="entry"
                                    value="#{providerAccounts}"
                                    itemLabel="#{entry.oauth2Token.nuxeoLogin} - #{entry.oauth2Token.serviceLogin}"
