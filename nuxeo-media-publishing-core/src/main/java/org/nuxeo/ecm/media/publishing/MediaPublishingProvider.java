@@ -60,4 +60,9 @@ public interface MediaPublishingProvider {
      * Checks it the given {@link PublishableMedia} is acessible
      */
     boolean isMediaAvailable(PublishableMedia media);
+
+    /**
+     * Checks if a media is published by the provider
+     */
+    boolean isMediaPublished(String mediaId, String account);
 }

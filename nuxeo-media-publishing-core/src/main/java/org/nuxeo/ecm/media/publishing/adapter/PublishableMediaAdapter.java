@@ -48,8 +48,13 @@ public class PublishableMediaAdapter implements PublishableMedia {
     public boolean isPublishedByProvider(String provider) throws ClientException {
         ArrayList<Map<String, Object>> providers = getProviders();
         for (Map<String, Object> entry : providers) {
-            if (entry.containsValue(provider))
-                return true;
+            if (entry.containsValue(provider)) {
+                String mediaId = (String) entry.get(MediaPublishingConstants.ID_PROPERTY_NAME);
+                String account = (String) entry.get(MediaPublishingConstants.ACCOUNT_PROPERTY_NAME);
+                if (getMediaPublishingProvider(provider).isMediaPublished(mediaId, account)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

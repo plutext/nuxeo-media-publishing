@@ -23,6 +23,7 @@ import org.nuxeo.ecm.media.publishing.wistia.model.Project;
 import org.nuxeo.ecm.media.publishing.wistia.model.Account;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
 
@@ -53,6 +54,10 @@ public class WistiaResponseParser {
 
     public static Media asMedia(ClientResponse clientResponse) {
         Media media;
+        if (clientResponse.getStatusInfo().getStatusCode() == Response.Status.NOT_FOUND.getStatusCode()) {
+            return null;
+        }
+
         try {
             media = mapper.readValue(clientResponse.getEntityInputStream(), Media.class);
         } catch (IOException e) {

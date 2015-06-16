@@ -83,6 +83,8 @@ public class MediaPublishingActions implements Serializable {
 
     private Map<String, String> providersEmbedCode;
 
+    private Map<String, Boolean> publishedProviders;
+
     Map<String, String> options;
 
     private DocumentModel currentDoc;
@@ -92,6 +94,7 @@ public class MediaPublishingActions implements Serializable {
         providersEmbedCode = new HashMap<>();
         providersURL = new HashMap<>();
         options = new HashMap<>();
+        publishedProviders = new HashMap<>();
     }
 
     public String[] getAvailableServices(DocumentModel doc) {
@@ -119,8 +122,12 @@ public class MediaPublishingActions implements Serializable {
     }
 
     public boolean isPublished(DocumentModel doc, String provider) {
-        PublishableMedia media = doc.getAdapter(PublishableMedia.class);
-        return media != null && media.getId(provider) != null && media.isPublishedByProvider(provider);
+        if (!publishedProviders.containsKey(provider)) {
+            PublishableMedia media = doc.getAdapter(PublishableMedia.class);
+            boolean isPublished = media != null && media.getId(provider) != null && media.isPublishedByProvider(provider);
+            publishedProviders.put(provider, isPublished);
+        }
+        return publishedProviders.get(provider);
     }
 
     public String getPublishedURL(DocumentModel doc, String provider) {

@@ -21,6 +21,7 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
 import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatistics;
 import com.google.api.services.youtube.model.VideoStatus;
@@ -149,6 +150,21 @@ public class YouTubeService extends OAuth2MediaPublishingProvider {
             return map;
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    @Override
+    public boolean isMediaPublished(String mediaId, String account) {
+        YouTubeClient client = getYouTubeClient(account);
+        if (client == null) {
+            return false;
+        }
+
+        try {
+            VideoListResponse list = client.getYouTube().videos().list("id").setId(mediaId).execute();
+            return list.getItems().size() > 0;
+        } catch (IOException e) {
+            return false;
         }
     }
 }

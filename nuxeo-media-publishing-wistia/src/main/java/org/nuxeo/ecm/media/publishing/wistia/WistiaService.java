@@ -133,6 +133,17 @@ public class WistiaService extends OAuth2MediaPublishingProvider {
         return map;
     }
 
+    @Override
+    public boolean isMediaPublished(String mediaId, String account) {
+        WistiaClient client = getWistiaClient(account);
+        if (client == null) {
+            return false;
+        }
+
+        Media media = client.getMedia(mediaId);
+        return media != null;
+    }
+
     public List<Project> getProjects(String account) {
         WistiaClient client = getWistiaClient(account);
         return client == null ? Collections.emptyList() : client.getProjects();
