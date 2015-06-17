@@ -10,6 +10,7 @@
   <extension target="org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry" point="providers">
     <provider>
       <name>YouTube</name>
+      <description>Youtube</description>
       <class>org.nuxeo.ecm.media.publishing.youtube.YoutubeOAuth2ServiceProvider</class>
       <tokenServerURL>https://accounts.google.com/o/oauth2/token</tokenServerURL>
       <authorizationServerURL>https://accounts.google.com/o/oauth2/auth?access_type=offline&amp;approval_prompt=force</authorizationServerURL>

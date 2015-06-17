@@ -10,6 +10,7 @@
   <extension target="org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProviderRegistry" point="providers">
     <provider>
       <name>Wistia</name>
+      <description>Wistia</description>
       <class>org.nuxeo.ecm.media.publishing.wistia.WistiaOAuth2ServiceProvider</class>
       <tokenServerURL>https://api.wistia.com/oauth/token</tokenServerURL>
       <authorizationServerURL>https://app.wistia.com/oauth/authorize</authorizationServerURL>
