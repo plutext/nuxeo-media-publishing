@@ -19,16 +19,6 @@
     <module>nuxeo-media-publishing-youtube</module>
   </modules>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.nuxeo.ecm.media.publishing</groupId>
-        <artifactId>nuxeo-media-publishing-core</artifactId>
-        <version>7.4-SNAPSHOT</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <repositories>
     <repository>
       <id>public</id>
