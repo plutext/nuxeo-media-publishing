@@ -27,19 +27,19 @@ import java.util.Map;
  * @since 7.3
  */
 public interface PublishableMedia {
-    String getProvider() throws ClientException;
+    String getProvider();
 
-    boolean isPublishedByProvider(String provider) throws ClientException;
+    boolean isPublishedByProvider(String provider);
 
-    ArrayList getProviders() throws ClientException;
+    ArrayList getProviders();
 
-    void setProvider(String name) throws ClientException;
+    void setProvider(String name);
 
-    String getId(String provider) throws ClientException;
+    String getId(String provider);
 
-    String getAccount(String provider) throws ClientException;
+    String getAccount(String provider);
 
-    void setId(String id) throws ClientException;
+    void setId(String id);
 
     String getTitle();
 
