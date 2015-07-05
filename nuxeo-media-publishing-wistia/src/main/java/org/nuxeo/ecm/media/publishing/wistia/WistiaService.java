@@ -55,7 +55,7 @@ public class WistiaService extends OAuth2MediaPublishingProvider {
         super(PROVIDER);
     }
 
-    public WistiaClient getWistiaClient(String account) throws ClientException {
+    public WistiaClient getWistiaClient(String account) {
         Credential credential = getCredential(account);
         if (credential == null) {
             return null;

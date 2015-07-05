@@ -88,7 +88,7 @@ public class MediaPublishingUploadWork extends AbstractWork {
         final IdRef idRef = new IdRef(docId);
         new UnrestrictedSessionRunner(repositoryName) {
             @Override
-            public void run() throws ClientException {
+            public void run() {
                 final DocumentModel doc = session.getDocument(idRef);
                 PublishableMedia media = doc.getAdapter(PublishableMedia.class);
 

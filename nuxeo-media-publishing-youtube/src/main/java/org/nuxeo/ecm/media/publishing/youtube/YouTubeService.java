@@ -55,7 +55,7 @@ public class YouTubeService extends OAuth2MediaPublishingProvider {
         super(PROVIDER);
     }
 
-    public YouTubeClient getYouTubeClient(String account) throws ClientException {
+    public YouTubeClient getYouTubeClient(String account) {
         Credential credential = getCredential(account);
         return (credential != null && credential.getAccessToken() != null) ? new YouTubeClient(credential) : null;
     }

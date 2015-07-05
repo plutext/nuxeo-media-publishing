@@ -40,12 +40,12 @@ public class PublishableMediaAdapter implements PublishableMedia {
     }
 
     @Override
-    public String getProvider() throws ClientException {
+    public String getProvider() {
         return (String) doc.getPropertyValue(MediaPublishingConstants.PROVIDER_PROPERTY_NAME);
     }
 
     @Override
-    public boolean isPublishedByProvider(String provider) throws ClientException {
+    public boolean isPublishedByProvider(String provider) {
         ArrayList<Map<String, Object>> providers = getProviders();
         for (Map<String, Object> entry : providers) {
             if (entry.containsValue(provider)) {
@@ -60,17 +60,17 @@ public class PublishableMediaAdapter implements PublishableMedia {
     }
 
     @Override
-    public ArrayList getProviders() throws ClientException {
+    public ArrayList getProviders() {
         return (ArrayList) doc.getPropertyValue(MediaPublishingConstants.PROVIDERS_PROPERTY_NAME);
     }
 
     @Override
-    public void setProvider(String name) throws ClientException {
+    public void setProvider(String name) {
 
     }
 
     @Override
-    public String getId(String provider) throws ClientException {
+    public String getId(String provider) {
         Map<String, Object> entry = getProviderEntry(provider);
         if (entry == null) {
             return null;
@@ -79,7 +79,7 @@ public class PublishableMediaAdapter implements PublishableMedia {
     }
 
     @Override
-    public String getAccount(String provider) throws ClientException {
+    public String getAccount(String provider) {
         Map<String, Object> entry = getProviderEntry(provider);
         if (entry == null) {
             return null;
@@ -88,7 +88,7 @@ public class PublishableMediaAdapter implements PublishableMedia {
     }
 
     @Override
-    public void setId(String id) throws ClientException {
+    public void setId(String id) {
 
     }
 
