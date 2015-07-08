@@ -18,7 +18,6 @@
 package org.nuxeo.ecm.media.publishing.adapter;
 
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
 
 import java.util.ArrayList;
 import java.util.Map;

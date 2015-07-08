@@ -19,10 +19,10 @@ package org.nuxeo.ecm.media.publishing.upload;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
 import org.nuxeo.ecm.core.api.VersioningOption;
 import org.nuxeo.ecm.core.api.event.DocumentEventCategories;
@@ -149,15 +149,11 @@ public class MediaPublishingUploadWork extends AbstractWork {
 
                     EventProducer evtProducer = Framework.getService(EventProducer.class);
                     Event event = ctx.newEvent(DocumentEventTypes.DOCUMENT_PUBLISHED);
-                    try {
-                        evtProducer.fireEvent(event);
-                    } catch (ClientException e) {
-                        log.error("Error while sending event", e);
-                    }
+                    evtProducer.fireEvent(event);
                     doc.getCoreSession().saveDocument(doc);
                     session.save();
                 } catch (IOException e) {
-                    throw new ClientException("Failed to upload media", e);
+                    throw new NuxeoException("Failed to upload media", e);
                 }
 
             }

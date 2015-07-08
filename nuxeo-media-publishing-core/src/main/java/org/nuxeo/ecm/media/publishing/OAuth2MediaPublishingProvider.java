@@ -18,7 +18,6 @@
 package org.nuxeo.ecm.media.publishing;
 
 import com.google.api.client.auth.oauth2.Credential;
-import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
 import org.nuxeo.ecm.platform.oauth2.providers.NuxeoOAuth2ServiceProvider;
 import org.nuxeo.ecm.platform.oauth2.providers.OAuth2ServiceProvider;

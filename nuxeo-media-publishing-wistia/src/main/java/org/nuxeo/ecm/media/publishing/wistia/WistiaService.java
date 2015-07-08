@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.common.utils.i18n.I18NUtils;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.ClientException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.schema.types.constraints.Constraint;
 import org.nuxeo.ecm.media.publishing.wistia.model.Media;
 import org.nuxeo.ecm.media.publishing.OAuth2MediaPublishingProvider;
@@ -69,11 +69,11 @@ public class WistiaService extends OAuth2MediaPublishingProvider {
                 credential.refreshToken();
                 if (credential.getAccessToken() == null) {
                     // nothing we can do without an access token
-                    throw new ClientException("Failed to refresh access token");
+                    throw new NuxeoException("Failed to refresh access token");
                 }
             }
         } catch (IOException e) {
-            throw new ClientException(e.getMessage());
+            throw new NuxeoException(e.getMessage(), e);
         }
 
         return new WistiaClient(credential.getAccessToken());
