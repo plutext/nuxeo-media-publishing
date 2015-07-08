@@ -47,5 +47,9 @@
       <groupId>org.jboss.seam</groupId>
       <artifactId>jboss-seam</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
   </dependencies>
 </project>
