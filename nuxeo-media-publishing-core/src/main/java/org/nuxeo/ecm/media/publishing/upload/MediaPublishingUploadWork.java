@@ -38,7 +38,6 @@ import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
 import org.nuxeo.runtime.api.Framework;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -115,28 +114,11 @@ public class MediaPublishingUploadWork extends AbstractWork {
                 };
                 try {
                     String mediaId = service.upload(media, listener, account, options);
-                    ArrayList<Map<String, Object>> providers = media.getProviders();
-                    HashMap<String, Object> entry = new HashMap<>(3);
+                    Map<String, Object> entry = new HashMap<>();
                     entry.put(MediaPublishingConstants.ID_PROPERTY_NAME, mediaId);
                     entry.put(MediaPublishingConstants.PROVIDER_PROPERTY_NAME, serviceId);
                     entry.put(MediaPublishingConstants.ACCOUNT_PROPERTY_NAME, account);
-
-                    boolean providerExists = false;
-                    // Check if provider already exists
-                    // if so replace entry, otherwise add
-                    for (Map<String, Object> e : providers) {
-                        if (e.containsValue(serviceId)) {
-                            e.replace(MediaPublishingConstants.ID_PROPERTY_NAME, mediaId);
-                            e.replace(MediaPublishingConstants.ACCOUNT_PROPERTY_NAME, account);
-                            providerExists = true;
-                        }
-                    }
-
-                    if (!providerExists) {
-                        providers.add(entry);
-                    }
-
-                    doc.setPropertyValue(MediaPublishingConstants.PROVIDERS_PROPERTY_NAME, providers);
+                    media.putProvider(entry);
 
                     // We don't want to erase the current version
                     doc.putContextData(VersioningService.VERSIONING_OPTION, VersioningOption.NONE);

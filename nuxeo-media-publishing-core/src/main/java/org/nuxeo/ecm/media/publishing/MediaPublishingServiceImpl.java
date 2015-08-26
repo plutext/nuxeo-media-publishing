@@ -36,8 +36,6 @@ import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -81,10 +79,7 @@ public class MediaPublishingServiceImpl extends DefaultComponent implements Medi
         try {
             if (service.unpublish(media)) {
                 // Remove provider from the list of published providers
-                ArrayList<Map<String, Object>> providers = media.getProviders();
-                Map<String, Object> providerEntry = media.getProviderEntry(provider);
-                providers.remove(providerEntry);
-                media.setProviders(providers);
+                media.removeProvider(provider);
 
                 // Track unpublish in document history
                 CoreSession session = doc.getCoreSession();

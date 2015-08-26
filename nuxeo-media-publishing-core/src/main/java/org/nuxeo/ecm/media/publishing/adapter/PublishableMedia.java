@@ -19,22 +19,24 @@ package org.nuxeo.ecm.media.publishing.adapter;
 
 import org.nuxeo.ecm.core.api.Blob;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @since 7.3
  */
 public interface PublishableMedia {
-    String getProvider();
+    Map<String, Object> getProvider(String provider);
+
+    void putProvider(Map<String, Object> provider);
+
+    void removeProvider(String provider);
 
     boolean isPublishedByProvider(String provider);
 
-    ArrayList getProviders();
+    List getProviders();
 
-    void setProviders(ArrayList<Map<String,Object>> providers);
-
-    void setProvider(String name);
+    void setProviders(List<Map<String,Object>> providers);
 
     String getId(String provider);
 
@@ -53,6 +55,4 @@ public interface PublishableMedia {
     String getEmbedCode(String provider);
 
     Map<String, String> getStats(String provider);
-
-    Map<String, Object> getProviderEntry(String provider);
 }
