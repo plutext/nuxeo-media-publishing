@@ -101,6 +101,13 @@ public class WistiaService extends OAuth2MediaPublishingProvider {
     }
 
     @Override
+    public boolean unpublish(PublishableMedia media) {
+        String account = media.getAccount(PROVIDER);
+        String mediaId = media.getId(PROVIDER);
+        return getWistiaClient(account).deleteMedia(mediaId) != null;
+    }
+
+    @Override
     public String getPublishedUrl(String mediaId, String account) {
         WistiaClient client = getWistiaClient(account);
         return client == null ? null : client.getAccount().getUrl() + "/medias/" + mediaId;

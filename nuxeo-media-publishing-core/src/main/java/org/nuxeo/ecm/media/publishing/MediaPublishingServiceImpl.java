@@ -19,13 +19,25 @@ package org.nuxeo.ecm.media.publishing;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.core.api.event.DocumentEventCategories;
+import org.nuxeo.ecm.core.api.event.DocumentEventTypes;
+import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventProducer;
+import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.work.api.Work;
 import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.ecm.media.publishing.adapter.PublishableMedia;
 import org.nuxeo.ecm.media.publishing.upload.MediaPublishingUploadWork;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -60,6 +72,34 @@ public class MediaPublishingServiceImpl extends DefaultComponent implements Medi
         Work work = new MediaPublishingUploadWork(serviceId, service, doc.getRepositoryName(), doc.getId(), doc.getCoreSession(), account, options);
         workManager.schedule(work, WorkManager.Scheduling.IF_NOT_RUNNING_OR_SCHEDULED);
         return work.getId();
+    }
+
+    @Override
+    public void unpublish(DocumentModel doc, String provider) {
+        MediaPublishingProvider service = getProvider(provider);
+        PublishableMedia media = doc.getAdapter(PublishableMedia.class);
+        try {
+            if (service.unpublish(media)) {
+                // Remove provider from the list of published providers
+                ArrayList<Map<String, Object>> providers = media.getProviders();
+                Map<String, Object> providerEntry = media.getProviderEntry(provider);
+                providers.remove(providerEntry);
+                media.setProviders(providers);
+
+                // Track unpublish in document history
+                CoreSession session = doc.getCoreSession();
+                DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(), doc);
+                ctx.setComment("Video unpublished from " + provider);
+                ctx.setCategory(DocumentEventCategories.EVENT_DOCUMENT_CATEGORY);
+                Event event = ctx.newEvent(DocumentEventTypes.DOCUMENT_PUBLISHED);
+                EventProducer evtProducer = Framework.getService(EventProducer.class);
+                evtProducer.fireEvent(event);
+                session.saveDocument(doc);
+                session.save();
+            }
+        } catch (IOException e) {
+            throw new NuxeoException("Failed to unpublish media", e);
+        }
     }
 
     @Override

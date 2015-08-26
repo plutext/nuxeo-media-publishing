@@ -32,6 +32,8 @@ public interface PublishableMedia {
 
     ArrayList getProviders();
 
+    void setProviders(ArrayList<Map<String,Object>> providers);
+
     void setProvider(String name);
 
     String getId(String provider);
@@ -51,4 +53,6 @@ public interface PublishableMedia {
     String getEmbedCode(String provider);
 
     Map<String, String> getStats(String provider);
+
+    Map<String, Object> getProviderEntry(String provider);
 }

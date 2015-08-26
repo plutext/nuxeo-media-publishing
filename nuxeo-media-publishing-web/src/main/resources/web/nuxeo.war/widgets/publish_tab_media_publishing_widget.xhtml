@@ -16,12 +16,12 @@
     </a4j:jsFunction>
   </h:form>
 
-  <h:panelGroup id="providers">
+  <a4j:outputPanel id="providers" ajaxRendered="false">
     <c:set var="doc" value="#{mediaPublishing.currentDoc}" scope="request"/>
     <c:forEach var="provider" items="#{mediaPublishing.getAvailableServices(doc)}">
       <c:set var="uploadStatus" value="#{mediaPublishing.getUploadStatus(doc, provider)}"/>
 
-      <div style="margin-bottom: 10px">
+      <a4j:outputPanel id="#{provider}_container" style="margin-bottom: 10px" layout="block">
         <h:outputText value="#{provider}" styleClass="labelColumn" style="display: inline-block; width: 125px"/>
 
         <h:panelGroup p:title="#{messages['error.mediaPublishing.providerDisabled']}"
@@ -38,10 +38,26 @@
           <c:set var="providerAccounts" value="#{oauthUserTokens.getProviderAccounts(provider, true)}"/>
 
           <c:if test="#{not empty providerAccounts}">
-            <a href="##{provider}_media_publish_popup" class="button smallButton media_publishing_openPopup">
-              <h:outputText value="#{messages['action.mediaPublishing.republish']}" rendered="#{mediaPublishing.isPublished(doc, provider)}"/>
-              <h:outputText value="#{messages['action.mediaPublishing.publish']}" rendered="#{not mediaPublishing.isPublished(doc, provider)}"/>
-            </a>
+            <h:form style="display: inline-block;">
+              <h:outputLink value="##{provider}_media_publish_popup"
+                            styleClass="button smallButton media_publishing_openPopup">
+                <h:outputText value="#{messages['action.mediaPublishing.republish']}" rendered="#{mediaPublishing.isPublished(doc, provider)}"/>
+                <h:outputText value="#{messages['action.mediaPublishing.publish']}" rendered="#{not mediaPublishing.isPublished(doc, provider)}"/>
+              </h:outputLink>
+
+              <a4j:region>
+                <a4j:commandButton value="#{messages['action.mediaPublishing.unpublish']}"
+                                   action="#{mediaPublishing.unpublish(provider)}"
+                                   class="button smallButton"
+                                   onclick="this.disabled=true"
+                                   rendered="#{mediaPublishing.isPublished(doc, provider)}"
+                                   render="providers"
+                                   style="vertical-align: top">
+                </a4j:commandButton>
+                <a4j:status startText="Unpublishing..."
+                            startStyle="position: inherit; background-color: inherit;"/>
+              </a4j:region>
+            </h:form>
 
             <div style="display:none">
               <div id="#{provider}_media_publish_popup">
@@ -68,12 +84,12 @@
                            value="#{mediaPublishing.getProviderOptionsWidgets(provider)}"
                            cache="true">
 
-                    <h:panelGroup id="#{provider}_optionsPanel">
+                    <a4j:outputPanel id="#{provider}_optionsPanel" layout="block" ajaxRendered="true">
                       <c:forEach var="optionWidget" items="#{providerOptionsWidgets}">
                         <nxl:widget mode="any" name="#{optionWidget.properties.widgetName}"
                                     value="#{mediaPublishing.options}"/>
                       </c:forEach>
-                    </h:panelGroup>
+                    </a4j:outputPanel>
                   </nxu:set>
 
                   <h:commandButton value="#{messages['action.mediaPublishing.publish']}"
@@ -93,7 +109,7 @@
             <h:graphicImage value="/icons/warning.gif" style="margin-left: 5px;"/>
           </h:panelGroup>
         </c:if>
-      </div>
+      </a4j:outputPanel>
     </c:forEach>
 
     <script type="text/javascript">
@@ -117,5 +133,5 @@
       });
     </script>
 
-  </h:panelGroup>
+  </a4j:outputPanel>
 </div>

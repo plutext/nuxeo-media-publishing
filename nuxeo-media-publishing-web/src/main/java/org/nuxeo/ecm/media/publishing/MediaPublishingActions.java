@@ -149,6 +149,12 @@ public class MediaPublishingActions implements Serializable {
         selectedAccount = null;
     }
 
+    public void unpublish(String provider) {
+        DocumentModel doc = navigationContext.getCurrentDocument();
+        getMediaPublishingService().unpublish(doc, provider);
+        publishedProviders.remove(provider);
+    }
+
     public String getEmbedCode(DocumentModel doc, String provider) {
         String embedCode = providersEmbedCode.get(provider);
         if (embedCode == null) {

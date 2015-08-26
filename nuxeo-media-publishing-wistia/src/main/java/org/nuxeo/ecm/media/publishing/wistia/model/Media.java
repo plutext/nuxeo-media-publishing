@@ -27,8 +27,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Media {
 
-    protected int id;
-
     protected String name;
 
     protected String type;
@@ -58,14 +56,6 @@ public class Media {
 
     @JsonProperty("assets")
     protected List<Assets> assets = new ArrayList<Assets>();
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -170,7 +160,6 @@ public class Media {
     @Override
     public String toString() {
         return "--- Media info ---" +
-                "\nid: \t" + getId() +
                 "\nname: \t" + getName() +
                 "\ntype: \t" + getType() +
                 "\nduration: \t" + getDuration() +

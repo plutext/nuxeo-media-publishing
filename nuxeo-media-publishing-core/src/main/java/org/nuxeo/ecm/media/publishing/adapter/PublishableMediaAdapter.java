@@ -64,6 +64,11 @@ public class PublishableMediaAdapter implements PublishableMedia {
     }
 
     @Override
+    public void setProviders(ArrayList<Map<String, Object>> providers) {
+        doc.setPropertyValue(MediaPublishingConstants.PROVIDERS_PROPERTY_NAME, providers);
+    }
+
+    @Override
     public void setProvider(String name) {
 
     }
@@ -130,7 +135,8 @@ public class PublishableMediaAdapter implements PublishableMedia {
         return Framework.getService(MediaPublishingService.class);
     }
 
-    private Map<String, Object> getProviderEntry(String provider) {
+    @Override
+    public Map<String, Object> getProviderEntry(String provider) {
         ArrayList<Map<String, Object>> providers = (ArrayList) doc.getPropertyValue(MediaPublishingConstants.PROVIDERS_PROPERTY_NAME);
         for (Map<String, Object> entry : providers) {
             if (entry.containsValue(provider)) {

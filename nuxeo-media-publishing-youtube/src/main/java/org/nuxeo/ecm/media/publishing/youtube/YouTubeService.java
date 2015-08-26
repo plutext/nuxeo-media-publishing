@@ -118,6 +118,13 @@ public class YouTubeService extends OAuth2MediaPublishingProvider {
     }
 
     @Override
+    public boolean unpublish(PublishableMedia media) throws IOException {
+        String account = media.getAccount(PROVIDER);
+        String mediaId = media.getId(PROVIDER);
+        return getYouTubeClient(account).delete(mediaId);
+    }
+
+    @Override
     public String getPublishedUrl(String mediaId, String account) {
         return "https://www.youtube.com/watch?v=" + mediaId;
     }

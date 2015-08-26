@@ -37,6 +37,13 @@ public interface MediaPublishingProvider {
     String upload(PublishableMedia media, MediaPublishingProgressListener progressListener, String account, Map<String, String> options) throws IOException;
 
     /**
+     * Unpublish the media
+     *
+     * @since 7.4
+     */
+    boolean unpublish(PublishableMedia media) throws IOException;
+
+    /**
      * Retrieve the URL for the published media
      */
     String getPublishedUrl(String mediaId, String account);

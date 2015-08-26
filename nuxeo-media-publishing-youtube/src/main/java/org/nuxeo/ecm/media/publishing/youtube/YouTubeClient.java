@@ -17,16 +17,17 @@
 
 package org.nuxeo.ecm.media.publishing.youtube;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
+import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.YouTube.Videos.Delete;
 import com.google.api.services.youtube.YouTube.Videos.Insert;
 import com.google.api.services.youtube.model.*;
 import org.apache.commons.logging.Log;
@@ -138,8 +139,9 @@ public class YouTubeClient {
         getYouTube().videos().update("status", youtubeVideo).execute();
     }
 
-    public void delete(String videoId) throws IOException {
-        getYouTube().videos().delete(videoId).execute();
+    public boolean delete(String videoId) throws IOException {
+        Delete deleteRequest = getYouTube().videos().delete(videoId);
+        return deleteRequest.executeUnparsed().getStatusCode() == HttpStatusCodes.STATUS_CODE_NO_CONTENT;
     }
 
     public VideoStatistics getStatistics(String videoId) throws IOException {
