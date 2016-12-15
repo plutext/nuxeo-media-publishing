@@ -7,9 +7,7 @@
   <div>
     <a4j:region id="documentViewRegion">
       <a4j:outputPanel id="documentViewPanel" layout="block">
-        <nxl:documentLayout mode="view"
-                            value="#{currentDocument}" defaultLayout="publish_layout"
-                            includeAnyMode="false"/>
+        <nxl:layout name="publish_layout" mode="view" value="#{currentDocument}" />
       </a4j:outputPanel>
     </a4j:region>
   </div>
