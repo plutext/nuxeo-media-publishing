@@ -14,9 +14,11 @@
 
   <modules>
     <module>nuxeo-media-publishing-core</module>
-    <module>nuxeo-media-publishing-web</module>
-    <module>nuxeo-media-publishing-wistia</module>
-    <module>nuxeo-media-publishing-youtube</module>
+    <module>nuxeo-media-publishing-jsf</module>
+    <module>nuxeo-media-publishing-wistia-core</module>
+    <module>nuxeo-media-publishing-wistia-jsf</module>
+    <module>nuxeo-media-publishing-youtube-core</module>
+    <module>nuxeo-media-publishing-youtube-jsf</module>
   </modules>
 
   <repositories>
