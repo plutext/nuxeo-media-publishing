@@ -40,7 +40,7 @@ public abstract class OAuth2MediaPublishingProvider implements MediaPublishingPr
     }
 
     protected OAuth2ServiceProvider getOAuth2ServiceProvider() {
-        OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getLocalService(OAuth2ServiceProviderRegistry.class);
+        OAuth2ServiceProviderRegistry oAuth2ProviderRegistry = Framework.getService(OAuth2ServiceProviderRegistry.class);
         return oAuth2ProviderRegistry.getProvider(providerName);
     }
 

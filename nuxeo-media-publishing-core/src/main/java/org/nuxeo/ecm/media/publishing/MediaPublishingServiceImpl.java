@@ -64,7 +64,7 @@ public class MediaPublishingServiceImpl extends DefaultComponent implements Medi
     @Override
     public String publish(DocumentModel doc, String serviceId, String account, Map<String, String> options) {
         MediaPublishingProvider service = getProvider(serviceId);
-        WorkManager workManager = Framework.getLocalService(WorkManager.class);
+        WorkManager workManager = Framework.getService(WorkManager.class);
         if (workManager == null) {
             throw new RuntimeException("No WorkManager available");
         }

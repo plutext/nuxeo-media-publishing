@@ -104,7 +104,7 @@ public class MediaPublishingActions implements Serializable {
     }
 
     public UploadStatus getUploadStatus(DocumentModel doc, String uploadServiceName) {
-        WorkManager workManager = Framework.getLocalService(WorkManager.class);
+        WorkManager workManager = Framework.getService(WorkManager.class);
 
         String workId = MediaPublishingUploadWork.getIdFor(doc.getRepositoryName(), doc.getId(), uploadServiceName);
         Work.State state = workManager.getWorkState(workId);
