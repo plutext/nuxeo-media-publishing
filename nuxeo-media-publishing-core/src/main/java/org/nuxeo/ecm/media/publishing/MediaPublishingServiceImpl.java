@@ -70,7 +70,7 @@ public class MediaPublishingServiceImpl extends DefaultComponent implements Medi
         }
 
         Work work = new MediaPublishingUploadWork(serviceId, service, doc.getRepositoryName(), doc.getId(), doc.getCoreSession(), account, options);
-        workManager.schedule(work, WorkManager.Scheduling.IF_NOT_RUNNING_OR_SCHEDULED);
+        workManager.schedule(work);
         return work.getId();
     }
 
