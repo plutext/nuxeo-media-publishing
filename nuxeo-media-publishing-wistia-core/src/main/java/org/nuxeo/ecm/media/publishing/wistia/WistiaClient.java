@@ -265,7 +265,7 @@ public class WistiaClient {
                 .execute();
 
         if (response.getStatus() == 200) {
-            return response.asJson().get("html").getTextValue();
+            return response.asJson().get("html").textValue();
         }
 
         return null;

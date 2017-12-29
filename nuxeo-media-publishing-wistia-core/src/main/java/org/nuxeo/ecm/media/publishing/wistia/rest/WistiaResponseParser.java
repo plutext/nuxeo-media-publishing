@@ -19,11 +19,11 @@
 
 package org.nuxeo.ecm.media.publishing.wistia.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.ClientResponse;
 import org.nuxeo.ecm.media.publishing.wistia.model.Media;
 import org.nuxeo.ecm.media.publishing.wistia.model.Project;
 import org.nuxeo.ecm.media.publishing.wistia.model.Account;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
